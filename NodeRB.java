@@ -1,5 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
+import java.lang.Math;
 /**
  * Write a description of class NodeRB here.
  * 
@@ -94,15 +94,23 @@ public class NodeRB extends Actor
         return key;
     }
 
-    @Override
-    public void setLocation(int x,int y)
-    {
-        super.setLocation(x,y);
-
-    }
-
     public FloatingText getText()
     {
         return text;
+    }
+    public void setLocationWithComponents(int newX,int newY)
+    {
+        this.setLocation(newX,newY);
+        text.setLocation(newX,newY);
+        parentConnector.setLocation((parent.getX()+this.getX())/2,(parent.getY()+this.getY())/2);
+        int dXc=Math.abs(parent.getX()-this.getX());
+        int dYc=Math.abs(parent.getY()-this.getY());
+        double hypotenuse=Math.sqrt(dXc*dXc+dYc*dYc);
+        double angle=Math.toDegrees(Math.asin(dYc/hypotenuse));//Calculating the anlge of the connector
+        angle*=((parent.getLeft()==this)?-1:1);
+        parentConnector.setRotation(90+(int)angle);//Rotating the connector to match the calculated angle
+                System.out.println("dXc : "+dXc+"\ndYc : "+dYc+"\n angle : "+angle);
+        parentConnector.setScale(5,(int)hypotenuse-55);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
+
     }
 }

@@ -38,30 +38,23 @@ public class RBTree extends Actor
         else
         {
 
-            if(y!=root)
-            {
-                NodeRB parent,uncle;
-                parent = y;
-                uncle=(y==y.getParent().getLeft())?y.getParent().getRight():y.getParent().getLeft();
-                //fixSpacing(parent);
-                //fixSpacing(uncle);
-            }
             Connector auxConnector = new Connector();//Creating a visual connector to the parent node
             newNode.setParentConnector(auxConnector);//Attributing the connector to the newly inserted node
             int yX,yY;//Parent coodinates
             yX=y.getX();
             yY=y.getY();
-            int dXc,dYc;//Distance to child (for Visualisation)
-            dXc=y.getDxChild();
-            dYc=y.getDyChild();
-            double angle=Math.toDegrees(Math.asin(Math.sin(dYc/Math.sqrt(dXc*dXc+dYc*dYc))));//Calculating the anlge of the connector
+            int dXc,dYc;//Distance from parent to child (for Visualisation)
+            dXc=50;
+            dYc=100;
+            double hypotenuse=Math.sqrt(dXc*dXc+dYc*dYc);
+            double angle=Math.toDegrees(Math.asin(dYc/hypotenuse));//Calculating the anlge of the connector
             if(k<=y.getKey())
             {
                 y.setLeft(newNode);//Linking the parent to the inserted node
                 world.addObject(newNode,yX-dXc,yY+dYc);//Adding the inserted node in the world, relative to the parent (for visualisation)
                 world.addObject(newNode.getText(),yX-dXc,yY+dYc);//Adding the inserted node's key's visualisation
                 world.addObject(auxConnector,yX-dXc/2,yY+dYc/2);//Adding the conector in the world, right between the inserted node and it's parent
-                auxConnector.turn(90-(int)Math.round(angle));//Rotating the connector to match the calculated angle
+                auxConnector.turn(90-(int)angle);//Rotating the connector to match the calculated angle
             }
             else
             {
@@ -69,25 +62,44 @@ public class RBTree extends Actor
                 world.addObject(newNode,yX+dXc,yY+dYc);//Adding the inserted node in the world, relative to the parent (for visualisation)
                 world.addObject(newNode.getText(),yX+dXc,yY+dYc);//Adding the inserted node's key's visualisation
                 world.addObject(auxConnector,yX+dXc/2,yY+dYc/2);//Adding the conector in the world, right between the inserted node and it's parent
-                auxConnector.turn(90+(int)Math.round(angle));//Rotating the connector to match the calculated angle
+                auxConnector.turn(90+(int)angle);//Rotating the connector to match the calculated angle
             }
             int nX,nY;//Inserted node coordinates
             nX=newNode.getX();
             nY=newNode.getY();
-            auxConnector.setScale(5,(int)Math.round(Math.sqrt((yX-nX)*(yX-nX)+(yY-nY)*(yY-nY)))-55);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
+            auxConnector.setScale(5,(int)hypotenuse-55);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
+            if(y!=root)
+                fixSpacing(newNode);
         }
 
     }
 
-    /*public void fixSpacing(NodeRB p)
+    private void fixSpacing(NodeRB node)
     {
-    Connector pConnector = p.getParentConnector();
-    int pdx=p.getDxParent();
-    pdx*=2;
-    p.setLocation(p.getParent().getX()+pdx,p.getY());
-    p.getText().setLocation(p.getX(),p.getY());
-
+        int leftChild,leftParent;
+        NodeRB parent=node.getParent(),uncle,cousin;
+        leftChild=(parent.getLeft()==node)?1:-1;
+        while(parent!=root)
+        {
+            leftParent=(parent.getParent().getLeft()==parent)?1:-1;
+            if(leftChild!=leftParent)
+            {
+                spaceNodes(parent,leftChild);
+                spaceNodes(parent.getParent(),-leftChild);
+            }
+            parent=parent.getParent();
+        }
+        
     }
-     */
+    private void spaceNodes(NodeRB node,int right)
+    {
+        if(node==null||node==root)
+            return;
+        node.setLocationWithComponents(node.getX()+50*right,node.getY());
+        spaceNodes(node.getLeft(),right);
+        spaceNodes(node.getRight(),right);
+        
+    }
+     
 
 }

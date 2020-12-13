@@ -19,7 +19,6 @@ public class Background extends World
     int initialPositionX,initialPositionY;
     MouseInfo mouse;
     InsertButton ib;
-    NodeRB rb1;
     public Background()
     {    
 
@@ -31,6 +30,7 @@ public class Background extends World
         addObject(ib,900,500);
         addObject(ib.getTextBox(),750,500);
         addObject(ib.getText(),750,500);
+        setPaintOrder(Fixed.class);
         
 
     }
