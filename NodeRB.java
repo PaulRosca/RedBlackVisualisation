@@ -109,7 +109,6 @@ public class NodeRB extends Actor
         double angle=Math.toDegrees(Math.asin(dYc/hypotenuse));//Calculating the anlge of the connector
         angle*=((parent.getLeft()==this)?-1:1);
         parentConnector.setRotation(90+(int)angle);//Rotating the connector to match the calculated angle
-                System.out.println("dXc : "+dXc+"\ndYc : "+dYc+"\n angle : "+angle);
         parentConnector.setScale(5,(int)hypotenuse-55);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
 
     }
