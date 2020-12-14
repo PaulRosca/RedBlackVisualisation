@@ -31,7 +31,6 @@ public class Background extends World
         addObject(ib.getTextBox(),750,500);
         addObject(ib.getText(),750,500);
         setPaintOrder(Fixed.class);
-        
 
     }
 

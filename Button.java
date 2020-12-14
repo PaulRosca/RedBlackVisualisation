@@ -55,7 +55,9 @@ public class Button extends Fixed
                     timer=0;
                 }
             }
-            if(key!=null)
+            else if(Greenfoot.isKeyDown("enter"))
+                applyFunction();
+            else if(key!=null)
             {
                 if(key.compareTo("0")>=0&&key.compareTo("9")<=0)
                     text.addChar(key);  
@@ -81,17 +83,13 @@ public class Button extends Fixed
         else if(Greenfoot.mouseClicked(this))
         {
             pressed=false;
-            String auxString=text.getString();
-            text.clear();
-            if(!auxString.isEmpty())
-                function(auxString);
-
+            applyFunction();
         }
         else if(!focused)
             pressed=false;
 
     }
-
+    
     public void setState()
     {
         if(pressed)
@@ -117,6 +115,12 @@ public class Button extends Fixed
     {
         return text;
     }
-
+    private void applyFunction()
+    {
+        String auxString=text.getString();
+        text.clear();
+        if(!auxString.isEmpty())
+            function(auxString);
+    }
     public void function(String k){}
 }

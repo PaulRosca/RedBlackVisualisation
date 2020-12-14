@@ -13,13 +13,10 @@ public class NodeRB extends Actor
     private boolean color;
     private FloatingText text;
     private Connector parentConnector;
-    private int dxChild,dyChild; //X distance to child and Y distance to child (For visualization)
     public NodeRB(int k)
     {
         color = false;
         parent=null;
-        dxChild=50;
-        dyChild=100;
         left=null;
         right=null;
         key=k;
@@ -54,14 +51,6 @@ public class NodeRB extends Actor
     {
         parent=x;
     }
-    public void setDxChild(int dx)
-    {
-    dxChild=dx;
-    }
-    public void setDyChild(int dy)
-    {
-    dyChild=dy;
-    }
 
     public NodeRB getLeft()
     {
@@ -77,14 +66,7 @@ public class NodeRB extends Actor
     {
         return parent;
     }
-    public int getDxChild()
-    {
-    return dxChild;
-    }
-    public int getDyChild()
-    {
-    return dyChild;
-    }
+    
     public Connector getParentConnector()
     {
         return parentConnector;
@@ -100,16 +82,26 @@ public class NodeRB extends Actor
     }
     public void setLocationWithComponents(int newX,int newY)
     {
+        int dx,dy;
+        dx=newX-this.getX();
+        dy=newY-this.getY();
         this.setLocation(newX,newY);
         text.setLocation(newX,newY);
-        parentConnector.setLocation((parent.getX()+this.getX())/2,(parent.getY()+this.getY())/2);
-        int dXc=Math.abs(parent.getX()-this.getX());
-        int dYc=Math.abs(parent.getY()-this.getY());
-        double hypotenuse=Math.sqrt(dXc*dXc+dYc*dYc);
-        double angle=Math.toDegrees(Math.asin(dYc/hypotenuse));//Calculating the anlge of the connector
-        angle*=((parent.getLeft()==this)?-1:1);
-        parentConnector.setRotation(90+(int)angle);//Rotating the connector to match the calculated angle
-        parentConnector.setScale(5,(int)hypotenuse-55);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
-
+        if(parent!=null)//Unless we are moving the root itself
+        {
+            parentConnector.setLocation((parent.getX()+this.getX())/2,(parent.getY()+this.getY())/2);
+            int dXc=Math.abs(parent.getX()-this.getX());
+            int dYc=Math.abs(parent.getY()-this.getY());
+            double hypotenuse=Math.sqrt(dXc*dXc+dYc*dYc);
+            double angle=Math.toDegrees(Math.asin(dYc/hypotenuse));//Calculating the anlge of the connector
+            angle*=((parent.getLeft()==this)?-1:1);
+            parentConnector.setRotation(90+(int)angle);//Rotating the connector to match the calculated angle
+            parentConnector.setScale(5,(int)hypotenuse-55);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
+        }
+        //We move the children too
+        if(left!=null)
+            left.setLocationWithComponents(left.getX()+dx,left.getY()+dy);
+        if(right!=null)
+            right.setLocationWithComponents(right.getX()+dx,right.getY()+dy);
     }
 }
