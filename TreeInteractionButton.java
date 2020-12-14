@@ -10,10 +10,11 @@ public class TreeInteractionButton  extends Button
      * Constructor for objects of class TreeInteractionButton
      */
     protected RBTree t;
-    public TreeInteractionButton(int x,int y,RBTree rbt)
+    public TreeInteractionButton(RBTree rbt)
     {
-        super(x,y);
+        super();
         t=rbt;
     }
+
 
 }

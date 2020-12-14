@@ -19,7 +19,7 @@ public class Text extends Fixed
 
     public void updateImage()
     {
-        setImage(new GreenfootImage(text,20,Color.BLACK,null));
+        setImage(new GreenfootImage(text,21,Color.BLACK,null));
     }
 
     public void addChar(String c)

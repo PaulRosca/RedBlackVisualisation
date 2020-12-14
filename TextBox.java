@@ -14,9 +14,8 @@ public class TextBox extends Fixed
      */
     public TextBox(int x,int y)
     {
+        setImage("TextBox.png");
         GreenfootImage img = getImage();
-        img.scale(x,y);
-        setImage(img);
-
+       // img.scale(x,y);
     }
 }

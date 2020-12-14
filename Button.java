@@ -14,12 +14,10 @@ public class Button extends Fixed
     private TextBox tb;
     private int timer=0;
     private int xScale,yScale;
-    public Button(int x,int y)
+    public Button()
     {
-        tb=new TextBox(200,20);
+        tb=new TextBox(70,20);
         text = new Text();
-        xScale=x;
-        yScale=y;
     }
 
     public void act() 
@@ -28,15 +26,7 @@ public class Button extends Fixed
         CheckMouse();
         setState();
         updateTextBox();
-        scale();
 
-    }
-
-    public void scale()
-    {
-        GreenfootImage img=getImage();
-        img.scale(xScale,yScale);
-        setImage(img);
     }
 
     public void updateTextBox()
@@ -57,7 +47,7 @@ public class Button extends Fixed
             }
             else if(Greenfoot.isKeyDown("enter"))
                 applyFunction();
-            else if(key!=null)
+            else if(key!=null&&text.getString().length()<6)
             {
                 if(key.compareTo("0")>=0&&key.compareTo("9")<=0)
                     text.addChar(key);  

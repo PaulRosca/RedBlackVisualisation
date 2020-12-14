@@ -66,6 +66,10 @@ public class NodeRB extends Actor
     {
         return parent;
     }
+    public boolean getColor()
+    {
+        return color;
+    }
     
     public Connector getParentConnector()
     {

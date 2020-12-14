@@ -10,11 +10,13 @@ public class RBTree extends Actor
 {
     private NodeRB root;//Tree root
     private World world;//Current world
+    private NodePointer nodePointer;//Pointer to current node (for visualisation)
     public RBTree(World myWorld)
     {
         setImage((GreenfootImage)(null));
         root=null;
         world=myWorld;
+        nodePointer = new NodePointer();
     }
 
     public void insert(int k)
@@ -23,8 +25,10 @@ public class RBTree extends Actor
         NodeRB y,x;
         y=null;//Parent node for iterating the tree
         x=root;//Current node for iterating the tree
+        world.addObject(nodePointer,world.getWidth()/2,100);
         while(x!=null)//While we've not reached a leaf
         {
+            nodePointer.setLocationTransition(x.getX(),x.getY(),50);
             y=x;//Change the parent to the current node
             x=k>x.getKey()?x.getRight():x.getLeft();//Updating the current node to find the desired inserting location
         }
@@ -64,17 +68,18 @@ public class RBTree extends Actor
                 world.addObject(auxConnector,yX+dXc/2,yY+dYc/2);//Adding the conector in the world, right between the inserted node and it's parent
                 auxConnector.turn(90+(int)angle);//Rotating the connector to match the calculated angle
             }
+            nodePointer.setLocation(newNode.getX(),newNode.getY());
             int nX,nY;//Inserted node coordinates
             nX=newNode.getX();
             nY=newNode.getY();
             auxConnector.setScale(5,(int)hypotenuse-55);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
             if(y!=root)
                 fixSpacing(newNode);
-            if(k==90)
-                leftRotate(newNode.getParent());
-
+            nodePointer.setLocation(newNode.getX(),newNode.getY());
 
         }
+        //colorFixup(newNode);
+        //world.removeObject(nodePointer);
 
     }
 
@@ -102,6 +107,61 @@ public class RBTree extends Actor
         node.setLocationWithComponents(node.getX()+50*right,node.getY());
         //spaceNodes(node.getLeft(),right);
         //spaceNodes(node.getRight(),right);
+        
+    }
+    private void colorFixup(NodeRB z)
+    {
+        NodeRB uncle;
+            while(z.getParent()!=null&&z.getParent().getColor()==false)//While parent's color is red
+            {
+                if(z.getParent()==z.getParent().getParent().getLeft())
+                {
+                    uncle=z.getParent().getParent().getRight();
+                    if(uncle!=null && uncle.getColor()==false)
+                    {
+                        z.getParent().setColor(true);//We make the parent black
+                        uncle.setColor(true);//We make the uncle black
+                        z.getParent().getParent().setColor(false);//We make the grandparent red
+                        z=z.getParent().getParent();//We make the current node the grandparent
+                    }
+                    else
+                    {
+                        if(z==z.getParent().getRight())
+                        {
+                            z=z.getParent();
+                            leftRotate(z);
+                        }
+                        z.getParent().setColor(true);//We make the parent black
+                        z.getParent().getParent().setColor(false);//We make the grandparent red;
+                        rightRotate(z.getParent().getParent());  
+                        
+                    }
+                }
+                else
+                {
+                    uncle=z.getParent().getParent().getRight();
+                    if(uncle!=null && uncle.getColor()==false)
+                    {
+                        z.getParent().setColor(true);//We make the parent black
+                        uncle.setColor(true);//We make the uncle black
+                        z.getParent().getParent().setColor(false);//We make the grandparent red
+                        z=z.getParent().getParent();//We make the current node the grandparent
+                    }
+                    else
+                    {
+                        if(z==z.getParent().getLeft())
+                        {
+                            z=z.getParent();
+                            rightRotate(z);
+                        }
+                        z.getParent().setColor(true);//We make the parent black
+                        z.getParent().getParent().setColor(false);//We make the grandparent red;
+                        leftRotate(z.getParent().getParent());
+                    }
+                
+                }
+            }
+        root.setColor(true); // We make the root black
         
     }
     private void leftRotate(NodeRB x)
@@ -159,7 +219,7 @@ public class RBTree extends Actor
             y.setParentConnector(x.getParentConnector());
             x.setParentConnector(null);
         }
-        if(parent.getLeft()==y)
+        else if(parent.getLeft()==y)
             parent.setLeft(x);
         else
             parent.setRight(x);

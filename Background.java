@@ -26,11 +26,11 @@ public class Background extends World
         scroller = new Scroller(this);
         rbt = new RBTree(this);
         addObject(rbt,0,0);
-        ib=new InsertButton(70,25,rbt);
+        ib=new InsertButton(rbt);
         addObject(ib,900,500);
-        addObject(ib.getTextBox(),750,500);
-        addObject(ib.getText(),750,500);
-        setPaintOrder(Fixed.class);
+        addObject(ib.getTextBox(),800,501);
+        addObject(ib.getText(),800,501);
+        setPaintOrder(Fixed.class,NodePointer.class);
 
     }
 
