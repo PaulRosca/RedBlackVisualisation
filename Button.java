@@ -32,7 +32,10 @@ public class Button extends Fixed
     public void updateTextBox()
     {
         if(Greenfoot.mouseClicked(tb))
-            MouseTracker.setCurrentFocus(tb);
+            {
+                MouseTracker.setCurrentFocus(tb);
+                String key=Greenfoot.getKey();//We clear key buffer
+            }
         if(MouseTracker.getCurrentFocus()==tb)
         {
             String key=Greenfoot.getKey();

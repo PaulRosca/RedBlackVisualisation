@@ -78,7 +78,8 @@ public class RBTree extends Actor
             nodePointer.setLocation(newNode.getX(),newNode.getY());
 
         }
-        //colorFixup(newNode);
+        colorFixup(newNode);
+        nodePointer.setLocation(newNode.getX(),newNode.getY());
         //world.removeObject(nodePointer);
 
     }
@@ -139,7 +140,7 @@ public class RBTree extends Actor
                 }
                 else
                 {
-                    uncle=z.getParent().getParent().getRight();
+                    uncle=z.getParent().getParent().getLeft();
                     if(uncle!=null && uncle.getColor()==false)
                     {
                         z.getParent().setColor(true);//We make the parent black
@@ -166,45 +167,102 @@ public class RBTree extends Actor
     }
     private void leftRotate(NodeRB x)
     {
-        NodeRB parent,a,b,y;
+        NodeRB parent,b,a,y;
         parent=x.getParent();
         y=x.getRight();
         b=y.getLeft();
         if(parent==null)
-                {
-                 root=y;
-                 x.setParentConnector(y.getParentConnector());
-                 y.setParentConnector(null);
-                }
+        {
+            root=y;
+            x.setParentConnector(y.getParentConnector());
+            y.setParentConnector(null);
+        }
         else if(parent.getLeft()==x)
-            parent.setLeft(y);
+                parent.setLeft(y);
         else
-            parent.setRight(y);
+                parent.setRight(y);
         y.setParent(parent);
         y.setLocationWithComponents(x.getX(),x.getY());
         y.setLeft(x);
         x.setParent(y);
         a=x.getLeft();
-        int ax,ay;
+        int ax,ay,auxx;
         if(a==null)
         {
             ax=x.getX()-50;
-            ay=x.getY()+100;
+            ay=y.getY()+100;
+            auxx=1;
         }
         else
         {
-           ax=a.getX();
-           ay=a.getY();
+            ax=a.getX();
+            ay=a.getY();
+            auxx=(x.getX()-ax)/50;
         }
         x.setRight(b);
         if(b!=null)
         {
             b.setParent(x);
-            b.setLocationWithComponents(x.getX()+50,x.getY()+100);
+            b.setLocationWithComponents(x.getX()+50,y.getY()+100);
         }
         x.setLocationWithComponents(ax,ay);
         
-        spaceNodes(y,1);
+        while(auxx>0)
+            {
+                spaceNodes(y,1);
+                auxx--;
+            }
+        
+        if(b!=null)
+        {
+            NodeRB aux=b.getLeft();
+            int count=0;
+            while(aux!=null)
+            {
+                    count+=(aux.getParent().getX()-aux.getX())/50;
+                    aux=aux.getLeft();
+            }
+            while(count>0)
+            {
+                spaceNodes(x,-1);
+                spaceNodes(y,1);
+                spaceNodes(b,1);
+                count--;
+            }
+            count=1;
+            aux=b.getRight();
+            while(aux!=null)
+            {
+            count+=(aux.getX()-aux.getParent().getX())/50;
+            aux=aux.getRight();
+            }
+            aux=x.getLeft();
+            if(aux!=null)
+                {
+                    aux=aux.getRight();
+                    while(aux!=null)
+                    {
+                        count-=(aux.getX()-aux.getParent().getX())/50;
+                        aux=aux.getRight();
+                    }
+                    
+                }
+            while(count>0)
+            {
+                spaceNodes(x,-1);
+                spaceNodes(y,1);
+                count--;
+            }
+            while(count<0)
+            {
+                spaceNodes(x,1);
+                spaceNodes(y,-1);
+                count++;
+            }
+            
+
+        }
+        
 
     }
     private void rightRotate(NodeRB y)
@@ -220,24 +278,26 @@ public class RBTree extends Actor
             x.setParentConnector(null);
         }
         else if(parent.getLeft()==y)
-            parent.setLeft(x);
+                parent.setLeft(x);
         else
-            parent.setRight(x);
+                parent.setRight(x);
         x.setParent(parent);
         x.setLocationWithComponents(y.getX(),y.getY());
         x.setRight(y);
         y.setParent(x);
         c=y.getRight();
-        int cx,cy;
+        int cx,cy,auxx;
         if(c==null)
         {
             cx=y.getX()+50;
             cy=y.getY()+100;
+            auxx=1;
         }
         else
         {
             cx=c.getX();
             cy=c.getY();
+            auxx=(cx-y.getX())/50;
         }
         y.setLeft(b);
         if(b!=null)
@@ -247,8 +307,60 @@ public class RBTree extends Actor
         }
         y.setLocationWithComponents(cx,cy);
         
-        spaceNodes(x,-1);
-    
+        while(auxx>0)
+            {
+                spaceNodes(x,-1);
+                auxx--;
+            }
+        if(b!=null)
+        {
+            NodeRB aux=b.getRight();
+            int count=0;
+            while(aux!=null)
+            {
+                    count+=(aux.getX()-aux.getParent().getX())/50;
+                    aux=aux.getRight();
+            }
+            while(count>0)
+            {
+                spaceNodes(y,1);
+                spaceNodes(x,-1);
+                spaceNodes(b,-1);
+                count--;
+            }
+            count=1;
+            aux=b.getLeft();
+            while(aux!=null)
+            {
+            count+=(aux.getParent().getX()-aux.getX())/50;
+            aux=aux.getLeft();
+            }
+            aux=y.getRight();
+            if(aux!=null)
+                {
+                    aux=aux.getLeft();
+                    while(aux!=null)
+                    {
+                        count-=(aux.getParent().getX()-aux.getX())/50;
+                        aux=aux.getLeft();
+                    }
+                    
+                }
+            while(count>0)
+            {
+                spaceNodes(y,1);
+                spaceNodes(x,-1);
+                count--;
+            }
+            while(count<0)
+            {
+                spaceNodes(y,-1);
+                spaceNodes(x,1);
+                count++;
+            }
+            
+
+        }
     }
      
 

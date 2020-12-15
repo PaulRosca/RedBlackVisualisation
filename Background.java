@@ -27,9 +27,9 @@ public class Background extends World
         rbt = new RBTree(this);
         addObject(rbt,0,0);
         ib=new InsertButton(rbt);
-        addObject(ib,900,500);
-        addObject(ib.getTextBox(),800,501);
-        addObject(ib.getText(),800,501);
+        addObject(ib,900,525);
+        addObject(ib.getTextBox(),800,526);
+        addObject(ib.getText(),800,526);
         setPaintOrder(Fixed.class,NodePointer.class);
 
     }
