@@ -17,6 +17,8 @@ public class RBTree extends Actor
         root=null;
         world=myWorld;
         nodePointer = new NodePointer();
+        world.addObject(nodePointer,world.getWidth()/2,100);
+        nodePointer.getImage().setTransparency(0);
     }
 
     public void insert(int k)
@@ -25,10 +27,14 @@ public class RBTree extends Actor
         NodeRB y,x;
         y=null;//Parent node for iterating the tree
         x=root;//Current node for iterating the tree
-        world.addObject(nodePointer,world.getWidth()/2,100);
+        if(root!=null)
+            nodePointer.setLocation(root.getX(),root.getY());
+        else
+            nodePointer.setLocation(world.getWidth()/2,100);
+        nodePointer.getImage().setTransparency(255);
         while(x!=null)//While we've not reached a leaf
         {
-            nodePointer.setLocationTransition(x.getX(),x.getY(),50);
+            nodePointer.setLocationTransition(x.getX(),x.getY());
             y=x;//Change the parent to the current node
             x=k>x.getKey()?x.getRight():x.getLeft();//Updating the current node to find the desired inserting location
         }
@@ -59,6 +65,7 @@ public class RBTree extends Actor
                 world.addObject(newNode.getText(),yX-dXc,yY+dYc);//Adding the inserted node's key's visualisation
                 world.addObject(auxConnector,yX-dXc/2,yY+dYc/2);//Adding the conector in the world, right between the inserted node and it's parent
                 auxConnector.turn(90-(int)angle);//Rotating the connector to match the calculated angle
+                
             }
             else
             {
@@ -67,47 +74,62 @@ public class RBTree extends Actor
                 world.addObject(newNode.getText(),yX+dXc,yY+dYc);//Adding the inserted node's key's visualisation
                 world.addObject(auxConnector,yX+dXc/2,yY+dYc/2);//Adding the conector in the world, right between the inserted node and it's parent
                 auxConnector.turn(90+(int)angle);//Rotating the connector to match the calculated angle
+                
+
             }
-            nodePointer.setLocation(newNode.getX(),newNode.getY());
-            int nX,nY;//Inserted node coordinates
-            nX=newNode.getX();
-            nY=newNode.getY();
+            
+            
+            newNode.getImage().setTransparency(0);
+            newNode.getText().getImage().setTransparency(0);
+            auxConnector.getImage().setTransparency(0);
+            
             auxConnector.setScale(5,(int)hypotenuse-55);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
+            
+            
             if(y!=root)
-                fixSpacing(newNode);
-            nodePointer.setLocation(newNode.getX(),newNode.getY());
+                    {
+                        y.setStickyPointer(nodePointer);
+                        startSpacing(newNode);
+                        y.setStickyPointer(null);
+                    }
+            nodePointer.setLocationTransition(newNode.getX(),newNode.getY());
+            newNode.getImage().setTransparency(255);
+            newNode.getText().getImage().setTransparency(255);
+            auxConnector.getImage().setTransparency(255);
 
         }
-        colorFixup(newNode);
-        nodePointer.setLocation(newNode.getX(),newNode.getY());
-        //world.removeObject(nodePointer);
+        //colorFixup(newNode);
+        Greenfoot.delay(50);
+        nodePointer.getImage().setTransparency(0);
 
     }
 
-    private void fixSpacing(NodeRB node)
+    private void startSpacing(NodeRB node)
     {
         int leftChild,leftParent;
-        NodeRB parent=node.getParent(),uncle,cousin;
+        NodeRB parent=node.getParent();
         leftChild=(parent.getLeft()==node)?1:-1;
-        while(parent!=root)
-        {
-            leftParent=(parent.getParent().getLeft()==parent)?1:-1;
-            if(leftChild!=leftParent)
+        fixSpacing(parent, leftChild);
+    }
+    private void fixSpacing(NodeRB parent,int leftChild)
+    {
+        if(parent==root)
+            return;
+        int leftParent;
+        leftParent=(parent.getParent().getLeft()==parent)?1:-1;
+        fixSpacing(parent.getParent(),leftChild);
+        if(leftChild!=leftParent)
             {
-                spaceNodes(parent,leftChild);
                 spaceNodes(parent.getParent(),-leftChild);
+                spaceNodes(parent,leftChild);
             }
-            parent=parent.getParent();
-        }
         
     }
     private void spaceNodes(NodeRB node,int right)
     {
         if(node==null||node==root)
             return;
-        node.setLocationWithComponents(node.getX()+50*right,node.getY());
-        //spaceNodes(node.getLeft(),right);
-        //spaceNodes(node.getRight(),right);
+        node.setLocationWithComponentsTransition(node.getX()+50*right,node.getY(),50);
         
     }
     private void colorFixup(NodeRB z)

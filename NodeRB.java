@@ -13,6 +13,7 @@ public class NodeRB extends Actor
     private boolean color;
     private FloatingText text;
     private Connector parentConnector;
+    private NodePointer stickyPointer;
     public NodeRB(int k)
     {
         color = false;
@@ -84,6 +85,13 @@ public class NodeRB extends Actor
     {
         return text;
     }
+    public void setLocation(int x,int y)
+    {
+        super.setLocation(x,y);
+        if(stickyPointer!=null)
+            stickyPointer.setLocation(x,y);
+        
+    }
     public void setLocationWithComponents(int newX,int newY)
     {
         int dx,dy;
@@ -107,5 +115,20 @@ public class NodeRB extends Actor
             left.setLocationWithComponents(left.getX()+dx,left.getY()+dy);
         if(right!=null)
             right.setLocationWithComponents(right.getX()+dx,right.getY()+dy);
+    }
+    public void setLocationWithComponentsTransition(int newX,int newY,int t)
+    {
+        int speedX=(newX-getX()<0)?-1:1;
+        for(int i=0;i<50;i++)
+            {
+                setLocationWithComponents(getX()+speedX,getY());
+
+                Greenfoot.delay(1);
+            }
+        
+    }
+    public void setStickyPointer(NodePointer np)
+    {
+        stickyPointer=np;
     }
 }
