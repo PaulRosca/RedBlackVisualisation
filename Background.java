@@ -19,6 +19,7 @@ public class Background extends World
     int initialPositionX,initialPositionY;
     MouseInfo mouse;
     InsertButton ib;
+    CenteringButton cb;
     boolean followPointer;
     public Background()
     {    
@@ -28,9 +29,11 @@ public class Background extends World
         rbt = new RBTree(this);
         addObject(rbt,0,0);
         ib=new InsertButton(rbt);
-        addObject(ib,900,525);
-        addObject(ib.getTextBox(),800,526);
-        addObject(ib.getText(),800,526);
+        addObject(ib,930,560);
+        addObject(ib.getTextBox(),830,561);
+        addObject(ib.getText(),830,561);
+        cb=new CenteringButton(this);
+        addObject(cb,960,40);
         setPaintOrder(Fixed.class,NodePointer.class);
         followPointer=false;
 
