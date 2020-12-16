@@ -35,6 +35,7 @@ public class RBTree extends Actor
         while(x!=null)//While we've not reached a leaf
         {
             nodePointer.setLocationTransition(x.getX(),x.getY());
+            Greenfoot.delay(50);
             y=x;//Change the parent to the current node
             x=k>x.getKey()?x.getRight():x.getLeft();//Updating the current node to find the desired inserting location
         }
@@ -383,6 +384,11 @@ public class RBTree extends Actor
             
 
         }
+    }
+    
+    public NodePointer getNodePointer()
+    {
+        return nodePointer;
     }
      
 

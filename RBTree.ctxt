@@ -17,4 +17,6 @@ comment7.params=x
 comment7.target=void\ leftRotate(NodeRB)
 comment8.params=y
 comment8.target=void\ rightRotate(NodeRB)
-numComments=9
+comment9.params=
+comment9.target=NodePointer\ getNodePointer()
+numComments=10

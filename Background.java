@@ -19,10 +19,11 @@ public class Background extends World
     int initialPositionX,initialPositionY;
     MouseInfo mouse;
     InsertButton ib;
+    boolean followPointer;
     public Background()
     {    
-
         super(1000, 600, 1,false); 
+        Greenfoot.setSpeed(50);
         scroller = new Scroller(this);
         rbt = new RBTree(this);
         addObject(rbt,0,0);
@@ -31,7 +32,7 @@ public class Background extends World
         addObject(ib.getTextBox(),800,526);
         addObject(ib.getText(),800,526);
         setPaintOrder(Fixed.class,NodePointer.class);
-        
+        followPointer=false;
 
     }
 
@@ -62,6 +63,14 @@ public class Background extends World
             MouseTracker.setCurrentFocus(null);
         }
 
+    }
+    public void setFollowPointer(boolean fp)
+    {
+        followPointer = fp;
+    }
+    public void centerView()
+    {
+        scroller.scroll(-scroller.getScrolledX(),-scroller.getScrolledY());
     }
 
 }

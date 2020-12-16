@@ -10,14 +10,11 @@ public class Button extends Fixed
 {
 
     private boolean pressed=false,focused=false;
-    private Text text;
-    private TextBox tb;
-    private int timer=0;
+
     private int xScale,yScale;
     public Button()
     {
-        tb=new TextBox(70,20);
-        text = new Text();
+
     }
 
     public void act() 
@@ -25,42 +22,11 @@ public class Button extends Fixed
         focused=false;
         CheckMouse();
         setState();
-        updateTextBox();
+       
 
     }
 
-    public void updateTextBox()
-    {
-        if(Greenfoot.mouseClicked(tb))
-            {
-                MouseTracker.setCurrentFocus(tb);
-                String key=Greenfoot.getKey();//We clear key buffer
-            }
-        if(MouseTracker.getCurrentFocus()==tb)
-        {
-            tb.setFocused(true);
-            String key=Greenfoot.getKey();
-            if(Greenfoot.isKeyDown("backspace"))
-            {
-                timer++;
-                if(timer==4)
-                {   
-                    text.removeChar();
-                    timer=0;
-                }
-            }
-            else if(Greenfoot.isKeyDown("enter"))
-                applyFunction();
-            else if(key!=null&&text.getString().length()<6)
-            {
-                if(key.compareTo("0")>=0&&key.compareTo("9")<=0)
-                    text.addChar(key);  
-            }
 
-        }
-        else
-            tb.setFocused(false);
-    }
 
     public void CheckMouse()
     {
@@ -101,22 +67,10 @@ public class Button extends Fixed
     public void setFocused(){}
 
     public void setPressed(){}
-
-    public TextBox getTextBox()
+    protected void applyFunction()
     {
-        return tb;
+    function("");
     }
 
-    public Text getText()
-    {
-        return text;
-    }
-    private void applyFunction()
-    {
-        String auxString=text.getString();
-        text.clear();
-        if(!auxString.isEmpty())
-            function(auxString);
-    }
     public void function(String k){}
 }
