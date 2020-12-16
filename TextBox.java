@@ -18,4 +18,11 @@ public class TextBox extends Fixed
         GreenfootImage img = getImage();
        // img.scale(x,y);
     }
+    public void setFocused(boolean focused)
+    {
+        if(focused)
+       setImage("TextBoxFocused.png");
+       else
+       setImage("TextBox.png");
+    }
 }

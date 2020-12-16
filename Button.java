@@ -38,6 +38,7 @@ public class Button extends Fixed
             }
         if(MouseTracker.getCurrentFocus()==tb)
         {
+            tb.setFocused(true);
             String key=Greenfoot.getKey();
             if(Greenfoot.isKeyDown("backspace"))
             {
@@ -57,6 +58,8 @@ public class Button extends Fixed
             }
 
         }
+        else
+            tb.setFocused(false);
     }
 
     public void CheckMouse()

@@ -4,4 +4,6 @@ comment0.text=\r\n\ Write\ a\ description\ of\ class\ TextBox\ here.\r\n\ \r\n\ 
 comment1.params=x\ y
 comment1.target=TextBox(int,\ int)
 comment1.text=\r\n\ Act\ -\ do\ whatever\ the\ TextBox\ wants\ to\ do.\ This\ method\ is\ called\ whenever\r\n\ the\ 'Act'\ or\ 'Run'\ button\ gets\ pressed\ in\ the\ environment.\r\n
-numComments=2
+comment2.params=focused
+comment2.target=void\ setFocused(boolean)
+numComments=3

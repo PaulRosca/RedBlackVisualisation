@@ -14,11 +14,19 @@ public class NodePointer extends Actor
      */
     public void setLocationTransition(int x,int y,int t)
     {
-        long i=0;
-        while(i<10000000)
+       int dX=x-getX(),dY=y-getY();
+       int counter=0;
+        while(getX()!=x)
         {
-            i++;
-           // System.out.println(i);
+            if(counter==t)
+                {
+                    Greenfoot.delay(2);
+                    counter=1;
+                }
+            setLocation(getX()+2,getY()+2);
+            System.out.println("x : " + getX()+"\tdesired x : "+x);
+            counter++;
         }
+        System.out.println("\nx: "+getX()+"\ny : "+getY());
     }
 }

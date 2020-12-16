@@ -19,6 +19,7 @@ public class Background extends World
     int initialPositionX,initialPositionY;
     MouseInfo mouse;
     InsertButton ib;
+    NodePointer np;
     public Background()
     {    
 
@@ -31,11 +32,15 @@ public class Background extends World
         addObject(ib.getTextBox(),800,526);
         addObject(ib.getText(),800,526);
         setPaintOrder(Fixed.class,NodePointer.class);
+        np = new NodePointer();
+        addObject(np,200,100);
+        
 
     }
 
     public void act()
     {
+        
         mouse = Greenfoot.getMouseInfo();
         checkMouse();
         if(pressed)
@@ -50,6 +55,7 @@ public class Background extends World
     {
         if(Greenfoot.mousePressed(null))
         {
+            np.setLocationTransition(500,400,5);
             initialPositionX=mouse.getX();
             initialPositionY=mouse.getY();
             pressed=true;
