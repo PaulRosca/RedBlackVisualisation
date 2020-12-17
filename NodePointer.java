@@ -18,7 +18,6 @@ public class NodePointer extends Actor
     {
      
        int dX=x-getX(),dY=y-getY();
-       int absX=Math.abs(dX),absY=Math.abs(dY);
        int speedX=dX/50,speedY=dY/50;
        int counter=0;
         while(getX()!=x)

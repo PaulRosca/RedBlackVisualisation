@@ -108,7 +108,7 @@ public class NodeRB extends Actor
             double angle=Math.toDegrees(Math.asin(dYc/hypotenuse));//Calculating the anlge of the connector
             angle*=((parent.getLeft()==this)?-1:1);
             parentConnector.setRotation(90+(int)angle);//Rotating the connector to match the calculated angle
-            parentConnector.setScale(5,(int)hypotenuse-55);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
+            parentConnector.setScale(5,(int)hypotenuse-45);//Seting the connector's size to match the distance between the connected nodes (for visualisation)
         }
         //We move the children too
         if(left!=null)
@@ -116,14 +116,20 @@ public class NodeRB extends Actor
         if(right!=null)
             right.setLocationWithComponents(right.getX()+dx,right.getY()+dy);
     }
-    public void setLocationWithComponentsTransition(int newX,int newY,int t)
+    public void setLocationWithComponentsTransition(int newX,int newY)
     {
-        int speedX=(newX-getX()<0)?-1:1;
-        for(int i=0;i<50;i++)
+        int dX=newX-getX(),dY=newY-getY();
+        int speedX=dX/50,speedY=dY/50;
+        int counter = 0;
+        while(getX()!=newX)
             {
-                setLocationWithComponents(getX()+speedX,getY());
-
-                Greenfoot.delay(1);
+                if(counter==1)
+                {
+                    Greenfoot.delay(1);
+                    counter=0;
+                }
+                setLocationWithComponents(getX()+speedX,getY()+speedY);
+                counter++;
             }
         
     }

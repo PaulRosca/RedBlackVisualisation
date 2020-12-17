@@ -23,7 +23,7 @@ public class TreeInteractionButton  extends Button
     }
     public void act()
     {
-        super.act();
+     super.act();
      updateTextBox();
     }
         public void updateTextBox()

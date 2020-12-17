@@ -21,7 +21,6 @@ public class Button extends Fixed
     {
         focused=false;
         CheckMouse();
-        setState();
        
 
     }
@@ -37,30 +36,33 @@ public class Button extends Fixed
             for (Object object : objects)
             {
                 if (object == this)
-                    focused=true;
+                    {
+                        focused=true;
+                        if(!pressed)
+                        setFocused();
+                        break;
+                    }
             }
         }
         if(Greenfoot.mousePressed(this))
-            pressed=true;
+            {
+                pressed=true;
+                setPressed();
+            }
         else if(Greenfoot.mouseClicked(this))
         {
             pressed=false;
+            setNormal();
             applyFunction();
         }
         else if(!focused)
-            pressed=false;
+            {
+                pressed=false;
+                setNormal();
+            }
 
     }
     
-    public void setState()
-    {
-        if(pressed)
-            setPressed();
-        else if(focused)
-            setFocused();
-        else
-            setNormal();
-    }
 
     public void setNormal(){}
 

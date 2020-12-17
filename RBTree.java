@@ -9,9 +9,9 @@ import java.lang.Math;
 public class RBTree extends Actor
 {
     private NodeRB root;//Tree root
-    private World world;//Current world
+    private Background world;//Current world
     private NodePointer nodePointer;//Pointer to current node (for visualisation)
-    public RBTree(World myWorld)
+    public RBTree(Background myWorld)
     {
         setImage((GreenfootImage)(null));
         root=null;
@@ -20,7 +20,56 @@ public class RBTree extends Actor
         world.addObject(nodePointer,world.getWidth()/2,100);
         nodePointer.getImage().setTransparency(0);
     }
+    NodeRB searchNode(int k,boolean findFirst)
+    {
+        NodeRB y,x;
+        y=null;
+        x=root;
+        if(root!=null)
+            nodePointer.setLocation(root.getX(),root.getY());
+        else
+            nodePointer.setLocation(world.getWidth()/2+world.getScrolledX(),100+world.getScrolledY());
+        nodePointer.getImage().setTransparency(255);
+        while(x!=null)
+        {
+            nodePointer.setLocationTransition(x.getX(),x.getY());
+            Greenfoot.delay(50);
+            if(x.getKey()==k&&findFirst)
+                return x;
+            y=x;
+            x=k>x.getKey()?x.getRight():x.getLeft();//Updating the current node to find the searched node
+        }
+        
+        nodePointer.getImage().setTransparency(0);
+        return y;
 
+    }
+    void search(int k)
+    {
+        nodePointer.setImage("NodePointerYellow.png");
+        NodeRB node=searchNode(k,true);
+        nodePointer.getImage().setTransparency(255);
+        if(node==null)
+        {
+            nodePointer.setImage("NodePointerRed.png");
+        }
+        else if(node.getKey()==k)
+        {
+            nodePointer.setImage("NodePointerGreen.png");
+        }
+        else
+        {
+        int leftChild=(k>node.getKey())?1:-1;
+        nodePointer.setLocationTransition(node.getX()+50*leftChild,node.getY()+100);
+        Greenfoot.delay(50);
+        nodePointer.setImage("NodePointerRed.png");
+        }
+        
+        Greenfoot.delay(50);
+        nodePointer.setImage("NodePointer.png");
+        nodePointer.getImage().setTransparency(0);
+        
+    }
     public void insert(int k)
     {
         NodeRB newNode = new NodeRB(k);//Creating a new node with the key desired to be inserted
@@ -30,7 +79,7 @@ public class RBTree extends Actor
         if(root!=null)
             nodePointer.setLocation(root.getX(),root.getY());
         else
-            nodePointer.setLocation(world.getWidth()/2,100);
+            nodePointer.setLocation(world.getWidth()/2+world.getScrolledX(),100+world.getScrolledY());
         nodePointer.getImage().setTransparency(255);
         while(x!=null)//While we've not reached a leaf
         {
@@ -43,8 +92,8 @@ public class RBTree extends Actor
         if(y==null)
         {
             root=newNode;
-            world.addObject(newNode,world.getWidth()/2,100);
-            world.addObject(newNode.getText(),world.getWidth()/2,100);
+            world.addObject(newNode,world.getWidth()/2+world.getScrolledX(),100+world.getScrolledY());
+            world.addObject(newNode.getText(),world.getWidth()/2+world.getScrolledX(),100+world.getScrolledY());
         }
         else
         {
@@ -94,12 +143,18 @@ public class RBTree extends Actor
                         y.setStickyPointer(null);
                     }
             nodePointer.setLocationTransition(newNode.getX(),newNode.getY());
+            Greenfoot.delay(50);
             newNode.getImage().setTransparency(255);
             newNode.getText().getImage().setTransparency(255);
             auxConnector.getImage().setTransparency(255);
 
         }
-        //colorFixup(newNode);
+        
+        Greenfoot.delay(50);
+        newNode.setStickyPointer(nodePointer);
+        colorFixup(newNode);
+        newNode.setStickyPointer(null);
+        
         Greenfoot.delay(50);
         nodePointer.getImage().setTransparency(0);
 
@@ -130,7 +185,7 @@ public class RBTree extends Actor
     {
         if(node==null||node==root)
             return;
-        node.setLocationWithComponentsTransition(node.getX()+50*right,node.getY(),50);
+        node.setLocationWithComponentsTransition(node.getX()+50*right,node.getY());
         
     }
     private void colorFixup(NodeRB z)
@@ -190,97 +245,137 @@ public class RBTree extends Actor
     }
     private void leftRotate(NodeRB x)
     {
-        NodeRB parent,b,a,y;
-        parent=x.getParent();
-        y=x.getRight();
-        b=y.getLeft();
-        if(parent==null)
+        NodeRB parent,b,a,y;//Auxiliary nodes used in rotation
+        parent=x.getParent();//We get the parent of the sub-tree rooted in x
+        y=x.getRight();//We get x's right child (y)
+        b=y.getLeft();//We get t's left child (b)
+        if(parent==null)//If x is the root of the tree
         {
-            root=y;
+            root=y;//We point the root to y, because y will take x's place
+            
+            //We take y's connector (because it will not be needed as root)
+            //and give it to x
             x.setParentConnector(y.getParentConnector());
             y.setParentConnector(null);
         }
-        else if(parent.getLeft()==x)
-                parent.setLeft(y);
-        else
-                parent.setRight(y);
-        y.setParent(parent);
-        y.setLocationWithComponents(x.getX(),x.getY());
-        y.setLeft(x);
-        x.setParent(y);
-        a=x.getLeft();
-        int ax,ay,auxx;
-        if(a==null)
+        else if(parent.getLeft()==x)//If x is a left child
+                parent.setLeft(y);//We make y take it's place
+        else//If x is a right child
+                parent.setRight(y);//We make t take it's place
+        y.setParent(parent);//We connect y to it's new parent
+        
+        int xX=x.getX(),xY=x.getY();
+        
+        x.setParent(y);//We make y x's parent
+        
+        
+        a=x.getLeft();//We get x's left child
+        int ax,ay;//a's coordinates
+        int aDistanceMultiplier;//Number of times a was spaced (visually) from x
+        if(a==null)//If a is a null leaf
         {
+            //We get it's (theoretical) coordinates
             ax=x.getX()-50;
-            ay=y.getY()+100;
-            auxx=1;
+            ay=x.getY()+100;
+            //We attribute the number of time it was spaced from x (default 1)
+            aDistanceMultiplier=1;
         }
         else
         {
+            //We get it's coordinates
             ax=a.getX();
             ay=a.getY();
-            auxx=(x.getX()-ax)/50;
+            //We calculate the number of times it was spaced from x
+            aDistanceMultiplier=(x.getX()-ax)/50;
         }
-        x.setRight(b);
-        if(b!=null)
+        x.setRight(null);//We disconnect y from x
+        y.setLeft(null);//We disconnect b from y
+        x.getParentConnector().getImage().setTransparency(0);//We make x's connector invisible (to avoid visual distorsion)
+        if(y.getParentConnector()!=null)
+        y.getParentConnector().getImage().setTransparency(0);
+        x.setLocationWithComponentsTransition(ax,ay);//We move x down in a's place
+
+        if(b!=null)//If b is not a null leaf
         {
-            b.setParent(x);
-            b.setLocationWithComponents(x.getX()+50,y.getY()+100);
+            x.setRight(b);//We connect b to x            
+            b.setParent(x);//We connect b to x
+            b.setLocationWithComponentsTransition(x.getX()+50,x.getY()+100);//We move it to it's corescponding coordinates (visually)
         }
-        x.setLocationWithComponents(ax,ay);
         
-        while(auxx>0)
+        
+        
+        
+        y.setLocationWithComponentsTransition(xX,xY);//We put y in x's place (visually)
+        y.setLeft(x);//We make x y's left child
+        if(y.getParentConnector()!=null)
+        y.getParentConnector().getImage().setTransparency(255);
+        x.setLocationWithComponents(x.getX(),x.getY());//We refresh the connector's angle and position
+        
+        
+        
+        x.getParentConnector().getImage().setTransparency(255);//We make x's connector visible again
+        
+        
+        //By moving x in a's place we essentially shift the subtree to the left
+        //(with exactly the initial distance from a to x)
+        while(aDistanceMultiplier>0)//We compensate the shift to the left
             {
-                spaceNodes(y,1);
-                auxx--;
+               spaceNodes(y,1);//By moving the subtree right (for every unit [50px] that a was away from x)
+               aDistanceMultiplier--;
             }
         
-        if(b!=null)
+        if(b!=null)//Again if b is not a null leaf
         {
-            NodeRB aux=b.getLeft();
-            int count=0;
+            NodeRB aux=b.getLeft();//We get b's left child
+            int leftMultiplier=0;//Number of units [50px] b extends to the left
             while(aux!=null)
             {
-                    count+=(aux.getParent().getX()-aux.getX())/50;
-                    aux=aux.getLeft();
+                //We calculate then umber of units aux is spaced to the left from it's parent
+                //And add that to the total left units multiplier
+                leftMultiplier+=(aux.getParent().getX()-aux.getX())/50;
+                aux=aux.getLeft();
             }
-            while(count>0)
+            while(leftMultiplier>0)//For every left unit
             {
-                spaceNodes(x,-1);
-                spaceNodes(y,1);
+                spaceNodes(x,-1);//We move x's subtree to the left so a doens't collide with b
+                spaceNodes(y,1);//We move y's subtree to the right so a doesn't collide with another subtree in the left
                 spaceNodes(b,1);
-                count--;
+                leftMultiplier--;
             }
-            count=1;
-            aux=b.getRight();
+            
+            int rightMultiplier=1;//Number of units [50px] b extends to the right, we need to consider b itself, so we start at 1
+            aux=b.getRight();//We get b's right child
             while(aux!=null)
             {
-            count+=(aux.getX()-aux.getParent().getX())/50;
-            aux=aux.getRight();
+                //We calculate the number of units aux is spaced to the right from it's parent
+                //And add that to the total right units multiplier
+                rightMultiplier+=(aux.getX()-aux.getParent().getX())/50;
+                aux=aux.getRight();
             }
-            aux=x.getLeft();
-            if(aux!=null)
+            aux=x.getLeft();//We get x's left child
+            if(aux!=null)//If the child is not a null leaf
                 {
-                    aux=aux.getRight();
+                    aux=aux.getRight();//We get the child's right child
                     while(aux!=null)
                     {
-                        count-=(aux.getX()-aux.getParent().getX())/50;
+                        //We calculate the number of units aux is spaced to the right from it's parent
+                        //And we substract that from the total right units multiplier, because those units compensate for the previous right shift
+                        rightMultiplier-=(aux.getX()-aux.getParent().getX())/50;
                         aux=aux.getRight();
                     }
                     
                 }
-            while(count>0)
+            while(rightMultiplier>0)//For every excessive right unit caused by appending b
             {
-                spaceNodes(x,-1);
-                spaceNodes(y,1);
-                count--;
+                spaceNodes(x,-1);//We move x's subtree to the left, so b doesn't collide with another subtree in the right
+                spaceNodes(y,1);//We move y's subtree to the right, so x doesn't collide with another subtree in the left
+                rightMultiplier--;
             }
-            while(count<0)
+            while(rightMultiplier<0)//For every deficit right unit caused by appending b
             {
-                spaceNodes(x,1);
-                spaceNodes(y,-1);
-                count++;
+                spaceNodes(x,1);//We move x's subtree to the right, to keep an uniform distance between nodes (in visualisation)
+                spaceNodes(y,-1);//We move y's subtree to the left, to compensate from the previous x move
+                rightMultiplier++;
             }
             
 
@@ -290,96 +385,132 @@ public class RBTree extends Actor
     }
     private void rightRotate(NodeRB y)
     {
-        NodeRB parent,b,c,x;
-        parent=y.getParent();
-        x=y.getLeft();
-        b=x.getRight();
-        if(parent==null)
+        NodeRB parent,b,c,x;//Auxiliary nodes used in rotation
+        parent=y.getParent();//We get the parent of the sub-tree rooted in y
+        x=y.getLeft();//We get y's left child (x)
+        b=x.getRight();//We get x's right child (b)
+        if(parent==null)//If y is the root of the tree
         {
-            root=x;
+            root=x;//We point to root to x, because x will take y's place
+            
+            //We take x's connector (because it will not be needed as root)
+            //and give it to y
             y.setParentConnector(x.getParentConnector());
             x.setParentConnector(null);
         }
-        else if(parent.getLeft()==y)
-                parent.setLeft(x);
-        else
-                parent.setRight(x);
-        x.setParent(parent);
-        x.setLocationWithComponents(y.getX(),y.getY());
-        x.setRight(y);
-        y.setParent(x);
-        c=y.getRight();
-        int cx,cy,auxx;
-        if(c==null)
+        else if(parent.getLeft()==y)//If y is a left child
+                parent.setLeft(x);//We make x take it's place
+        else//If y is a right child
+                parent.setRight(x);//We make x take it's place
+        x.setParent(parent);//We connect x to it's new parent
+        
+        int yX=y.getX(),yY=y.getY();
+        
+        
+        y.setParent(x);//We make x y's parent
+        
+        c=y.getRight();//We get y's right child (c)
+        int cx,cy;//c's coordinates
+        int cDistanceMultiplier;//Number of times c was spaced (visually) from y
+        if(c==null)//If c is a null leaf
         {
-            cx=y.getX()+50;
-            cy=y.getY()+100;
-            auxx=1;
+           //We get it's (theoretical) coordinates
+           cx=y.getX()+50;
+           cy=y.getY()+100;
+           //We attriubte the number of times it was spaced from y (default 1)
+           cDistanceMultiplier=1;
         }
         else
         {
+            //We get it's coordinates
             cx=c.getX();
             cy=c.getY();
-            auxx=(cx-y.getX())/50;
+            //We calculate the number of times it was spaced from y
+            cDistanceMultiplier=(cx-y.getX())/50;
         }
-        y.setLeft(b);
-        if(b!=null)
+        y.setLeft(null);//We disconnect x from y
+        x.setRight(null);//We disconnect b from x  
+        y.getParentConnector().getImage().setTransparency(0);//We make y's connector invisible (to avoid visual distorsion)
+        if(x.getParentConnector()!=null)
+        x.getParentConnector().getImage().setTransparency(0);
+        y.setLocationWithComponentsTransition(cx,cy);//We move y down (in c's place)        
+
+        if(b!=null)//If b is not a null leaf
         {
-            b.setParent(y);
-            b.setLocationWithComponents(y.getX()-50,y.getY()+100);
-        }
-        y.setLocationWithComponents(cx,cy);
+            y.setLeft(b);//We connect y to b  
+            b.setParent(y);//We connect b to y
+            b.setLocationWithComponentsTransition(y.getX()-50,y.getY()+100);//We move it to it's coresponding coordinates (visually) 
         
-        while(auxx>0)
+        }  
+             
+        x.setLocationWithComponentsTransition(yX,yY);//We put x in y's place (visually)
+        x.setRight(y);//We make y x's right child
+        if(x.getParentConnector()!=null)
+        x.getParentConnector().getImage().setTransparency(255);
+        y.setLocationWithComponents(y.getX(),y.getY());//We refresh the connector's angle and position
+        
+        y.getParentConnector().getImage().setTransparency(255);//We make y's connector visible again    
+
+        
+        //By moving y in c's place we essentially shift the subtree to the right
+        //(with exactly the inital distance from y to c)
+        while(cDistanceMultiplier>0)//We compensate the shift to the right
             {
-                spaceNodes(x,-1);
-                auxx--;
+                spaceNodes(x,-1);//By moving the subtree left (for every unit [50px] that c was away from y)
+                cDistanceMultiplier--;
             }
-        if(b!=null)
+        if(b!=null)//Again if b is not a null leaf
         {
-            NodeRB aux=b.getRight();
-            int count=0;
+            NodeRB aux=b.getRight();//We get b's right child
+            int rightMultiplier=0;//Number of units [50 px] b extends to the right
             while(aux!=null)
             {
-                    count+=(aux.getX()-aux.getParent().getX())/50;
+                    //We calculate the number of units aux is spaced to the right from it's parent
+                    //And add that to the total right units multiplier
+                    rightMultiplier+=(aux.getX()-aux.getParent().getX())/50;
                     aux=aux.getRight();
             }
-            while(count>0)
+            while(rightMultiplier>0)//For every right unit
             {
-                spaceNodes(y,1);
-                spaceNodes(x,-1);
-                spaceNodes(b,-1);
-                count--;
+                spaceNodes(y,1);//We move y's subtree to the right so c doesn't collide with b
+                spaceNodes(x,-1);//We move x's subtree to the left so c doesn't collide with another subtree in the right
+                spaceNodes(b,-1);//We move b's subtree to the lef to compensate to y's movement to the right
+                rightMultiplier--;
             }
-            count=1;
-            aux=b.getLeft();
+            
+            int leftMultiplier=1;//Number of units [50 px] b extends to the left, we need to consider b itself, so we start at 1
+            aux=b.getLeft();//We get b's left child
             while(aux!=null)
             {
-            count+=(aux.getParent().getX()-aux.getX())/50;
-            aux=aux.getLeft();
-            }
-            aux=y.getRight();
-            if(aux!=null)
-                {
+                    //We calculate the number of units aux is spaced to the left from it's parent
+                    //And add that to the total left units multiplier
+                    leftMultiplier+=(aux.getParent().getX()-aux.getX())/50;
                     aux=aux.getLeft();
+            }
+            aux=y.getRight();//We get y's right child
+            if(aux!=null)//If the child is not a null leaf
+                {
+                    aux=aux.getLeft();//We get the child's left child
                     while(aux!=null)
                     {
-                        count-=(aux.getParent().getX()-aux.getX())/50;
+                        //We calculate the number of units aux is spaced to the left from it's parent
+                        //And we substract that from the total left units multiplier, because those units compensate for the previous left units
+                        leftMultiplier-=(aux.getParent().getX()-aux.getX())/50;
                         aux=aux.getLeft();
                     }
                     
                 }
-            while(count>0)
+            while(leftMultiplier>0)//For every excessive left unit caused by appending b
             {
-                spaceNodes(y,1);
-                spaceNodes(x,-1);
-                count--;
+                spaceNodes(y,1);//We move y's subtree to the right, so b doesn't collide with another subtree in the left
+                spaceNodes(x,-1);//We move x's subtree to the left, so y dones't collide with another subtree in the right
+                leftMultiplier--;
             }
-            while(count<0)
+            while(leftMultiplier<0)//For every deficit left unit caused by appending b
             {
-                spaceNodes(y,-1);
-                spaceNodes(x,1);
-                count++;
+                spaceNodes(y,-1);//We move y's subtree to the left, to keep an uniform distance between nodes (in visualisation))
+                spaceNodes(x,1);//We move x's subtree to the right, to compensate from the previous y move;
+                leftMultiplier++;
             }
             
 
