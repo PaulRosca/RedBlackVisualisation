@@ -16,35 +16,39 @@ public class RBTree extends Actor
         setImage((GreenfootImage)(null));
         root=null;
         world=myWorld;
-        nodePointer = new NodePointer();
-        world.addObject(nodePointer,world.getWidth()/2,100);
+        nodePointer = new NodePointer(world);
+        world.addObject(nodePointer,world.getWidth()/2,200);
         nodePointer.getImage().setTransparency(0);
     }
-    NodeRB searchNode(int k,boolean findFirst)
+    private NodeRB searchNode(int k,boolean findFirst)
     {
         NodeRB y,x;
         y=null;
         x=root;
+        
         if(root!=null)
             nodePointer.setLocation(root.getX(),root.getY());
         else
-            nodePointer.setLocation(world.getWidth()/2+world.getScrolledX(),100+world.getScrolledY());
+
+            nodePointer.setLocation(world.getWidth()/2+world.getScrolledX(),200+world.getScrolledY());
         nodePointer.getImage().setTransparency(255);
+        nodePointer.focusOnThis();
         while(x!=null)
         {
+            Greenfoot.delay(25);
             nodePointer.setLocationTransition(x.getX(),x.getY());
-            Greenfoot.delay(50);
             if(x.getKey()==k&&findFirst)
                 return x;
             y=x;
             x=k>x.getKey()?x.getRight():x.getLeft();//Updating the current node to find the searched node
         }
+        Greenfoot.delay(50);
         
         nodePointer.getImage().setTransparency(0);
         return y;
 
     }
-    void search(int k)
+    public NodeRB search(int k)
     {
         nodePointer.setImage("NodePointerYellow.png");
         NodeRB node=searchNode(k,true);
@@ -55,6 +59,7 @@ public class RBTree extends Actor
         }
         else if(node.getKey()==k)
         {
+            Greenfoot.delay(25);
             nodePointer.setImage("NodePointerGreen.png");
         }
         else
@@ -68,32 +73,191 @@ public class RBTree extends Actor
         Greenfoot.delay(50);
         nodePointer.setImage("NodePointer.png");
         nodePointer.getImage().setTransparency(0);
+        return node;
         
+    }
+    private NodeRB successor(NodeRB node,NodePointer scsPointer)
+    {
+        NodeRB scs=null;
+        NodeRB current=node.getRight();
+        if(current==null)
+        world.addObject(scsPointer,node.getX()+50,node.getY()+100);
+        else
+        world.addObject(scsPointer,current.getX(),current.getY());
+        scsPointer.setImage("NodePointerOrange.png");
+        while(current!=null)
+        {
+            scsPointer.setLocationTransition(current.getX(), current.getY());
+            Greenfoot.delay(50);
+            scs=current;
+            current=current.getLeft();
+        }
+        return scs;
+    }
+    public void deleteKey(int k)
+    {
+        NodeRB node = search(k);
+        if(node==null||node.getKey()!=k)
+            return;
+        delete(node);
+    }
+    private void delete(NodeRB node)
+    {
+        
+        boolean blackNode=node.getColor();
+        int leftParent=0;          
+        NodeRB child=null,parent=node.getParent();
+        boolean moveAncestor=false;
+        NodeRB ancestor=parent;
+        int leftAncestor=0;
+        if(node.getLeft()==null||node.getRight()==null)
+        {
+            node.getImage().setTransparency(0);
+            node.getText().getImage().setTransparency(0);          
+            if(node.getLeft()==null)
+            {
+                int leftNode=0;
+                child=node.getRight();
+                if(parent==null)
+                    root=child;
+                else
+                {
+                    if(parent.getLeft()==node)
+                        {
+                            parent.setLeft(child);
+                            leftNode=1;
+                        }
+                    else
+                        {
+                            parent.setRight(child);
+                            leftNode=-1;
+                        }
+                    NodeRB grandParent=parent.getParent();
+                    leftParent=(grandParent==null)?0:(grandParent.getLeft()==parent)?1:-1;
+
+                }
+                if(child!=null)
+                {
+                    int dx=child.getX()-node.getX();//Child dx
+                    child.setParent(node.getParent());
+                    world.removeObject(child.getParentConnector());
+                    child.setParentConnector(node.getParentConnector());
+                    node.setParentConnector(null);
+                    child.setLocationWithComponentsTransition(node.getX(), node.getY(),false);
+                    
+                    if(child!=root&&leftNode==1)
+                    child.setLocationWithComponentsTransition(child.getX()+dx, child.getY(),false);
+                }
+                else if(leftParent!=0)
+                    {
+                        leftAncestor=leftParent;
+                        while(ancestor.getParent()!=null&&leftAncestor==leftNode)
+                            {
+                                leftAncestor=(ancestor.getParent().getLeft()==ancestor)?1:-1;
+                                ancestor=ancestor.getParent();
+                            }
+                        if(leftNode!=leftAncestor)
+                        moveAncestor=true;
+                    }
+                    
+
+            }
+            else if(node.getRight()==null)
+            {
+                
+                boolean rightNode=false;
+                child=node.getLeft();
+                if(parent==null)
+                    root=child;
+                else
+                {
+                    if(parent.getLeft()==node)
+                        parent.setLeft(child);
+                    else
+                        {
+                            parent.setRight(child);
+                            rightNode=true;
+                        }
+                }
+                int dx=child.getX()-node.getX();
+                child.setParent(node.getParent());
+                world.removeObject(child.getParentConnector());
+                child.setParentConnector(node.getParentConnector());
+                node.setParentConnector(null);
+                child.setLocationWithComponentsTransition(node.getX(), node.getY(),false);
+                if(child!=root&&rightNode)
+                    child.setLocationWithComponentsTransition(child.getX()+dx, child.getY(),false);
+    
+            }
+            world.removeObject(node);
+            world.removeObject(node.getText());
+            world.removeObject(node.getParentConnector());
+
+        }
+        else
+        {
+            nodePointer.getImage().setTransparency(255);
+            NodePointer scsPointer = new NodePointer(world);
+            Greenfoot.delay(50);
+            NodeRB scs=successor(node,scsPointer);//We get the succesor of the node we need to delete
+            Greenfoot.delay(50);
+            node.setKey(scs.getKey());
+            //node.setColor(scs.getColor());
+            Greenfoot.delay(50);
+            world.removeObject(scsPointer);
+            delete(scs);
+            child=node;
+            nodePointer.getImage().setTransparency(0);
+            
+        }
+        
+        Greenfoot.delay(50);
+        if(moveAncestor)
+            {
+                int leftNode;
+                ancestor.setLocationWithComponentsTransition(ancestor.getX()+50*leftAncestor, ancestor.getY(),false);
+                leftNode=leftAncestor;
+                ancestor=ancestor.getParent();
+                while(ancestor!=root)
+                {
+                    leftAncestor=(ancestor.getParent().getLeft()==ancestor)?1:-1;
+                    if(leftNode!=leftAncestor)
+                    {
+                    ancestor.setLocationWithComponentsTransition(ancestor.getX()+50*leftAncestor, ancestor.getY(),false);
+                    leftNode=leftAncestor;
+                    }
+                    ancestor=ancestor.getParent();
+                }
+                
+            }
+        if(blackNode)
+            deleteColorFixup(child,parent);
+
+    }
+    private boolean getColorOfNode(NodeRB node)
+    {
+        if(node==null)
+            return true;
+        return node.getColor();
+    }
+    private void deleteColorFixup(NodeRB x,NodeRB xParent)
+    {
+
     }
     public void insert(int k)
     {
         NodeRB newNode = new NodeRB(k);//Creating a new node with the key desired to be inserted
         NodeRB y,x;
-        y=null;//Parent node for iterating the tree
-        x=root;//Current node for iterating the tree
-        if(root!=null)
-            nodePointer.setLocation(root.getX(),root.getY());
-        else
-            nodePointer.setLocation(world.getWidth()/2+world.getScrolledX(),100+world.getScrolledY());
+        y=searchNode(k,false);//Parent node of k
         nodePointer.getImage().setTransparency(255);
-        while(x!=null)//While we've not reached a leaf
-        {
-            nodePointer.setLocationTransition(x.getX(),x.getY());
-            Greenfoot.delay(50);
-            y=x;//Change the parent to the current node
-            x=k>x.getKey()?x.getRight():x.getLeft();//Updating the current node to find the desired inserting location
-        }
-        newNode.setParent(y);//Setting the newly inserted node's parent to the last non-leaf node
+        newNode.setParent(y);//Setting the newly inserted node's parent
         if(y==null)
         {
             root=newNode;
-            world.addObject(newNode,world.getWidth()/2+world.getScrolledX(),100+world.getScrolledY());
-            world.addObject(newNode.getText(),world.getWidth()/2+world.getScrolledX(),100+world.getScrolledY());
+            int scrolledX=world.getScrolledX();
+            int scrolledY=world.getScrolledY();
+            world.addObject(newNode,world.getWidth()/2+scrolledX,200+scrolledY);
+            world.addObject(newNode.getText(),world.getWidth()/2+scrolledX,200+scrolledY);
         }
         else
         {
@@ -152,7 +316,7 @@ public class RBTree extends Actor
         
         Greenfoot.delay(50);
         newNode.setStickyPointer(nodePointer);
-        colorFixup(newNode);
+        insertColorFixup(newNode);
         newNode.setStickyPointer(null);
         
         Greenfoot.delay(50);
@@ -185,10 +349,10 @@ public class RBTree extends Actor
     {
         if(node==null||node==root)
             return;
-        node.setLocationWithComponentsTransition(node.getX()+50*right,node.getY());
+        node.setLocationWithComponentsTransition(node.getX()+50*right,node.getY(),true);
         
     }
-    private void colorFixup(NodeRB z)
+    private void insertColorFixup(NodeRB z)
     {
         NodeRB uncle;
             while(z.getParent()!=null&&z.getParent().getColor()==false)//While parent's color is red
@@ -293,23 +457,23 @@ public class RBTree extends Actor
         x.getParentConnector().getImage().setTransparency(0);//We make x's connector invisible (to avoid visual distorsion)
         if(y.getParentConnector()!=null)
         y.getParentConnector().getImage().setTransparency(0);
-        x.setLocationWithComponentsTransition(ax,ay);//We move x down in a's place
+        x.setLocationWithComponentsTransition(ax,ay,false);//We move x down in a's place
 
         if(b!=null)//If b is not a null leaf
         {
             x.setRight(b);//We connect b to x            
             b.setParent(x);//We connect b to x
-            b.setLocationWithComponentsTransition(x.getX()+50,x.getY()+100);//We move it to it's corescponding coordinates (visually)
+            b.setLocationWithComponentsTransition(x.getX()+50,x.getY()+100,false);//We move it to it's corescponding coordinates (visually)
         }
         
         
         
         
-        y.setLocationWithComponentsTransition(xX,xY);//We put y in x's place (visually)
+        y.setLocationWithComponentsTransition(xX,xY,false);//We put y in x's place (visually)
         y.setLeft(x);//We make x y's left child
         if(y.getParentConnector()!=null)
         y.getParentConnector().getImage().setTransparency(255);
-        x.setLocationWithComponents(x.getX(),x.getY());//We refresh the connector's angle and position
+        x.setLocationWithComponents(x.getX(),x.getY(),false);//We refresh the connector's angle and position
         
         
         
@@ -380,7 +544,7 @@ public class RBTree extends Actor
             
 
         }
-        
+        Greenfoot.delay(50);
 
     }
     private void rightRotate(NodeRB y)
@@ -433,21 +597,21 @@ public class RBTree extends Actor
         y.getParentConnector().getImage().setTransparency(0);//We make y's connector invisible (to avoid visual distorsion)
         if(x.getParentConnector()!=null)
         x.getParentConnector().getImage().setTransparency(0);
-        y.setLocationWithComponentsTransition(cx,cy);//We move y down (in c's place)        
+        y.setLocationWithComponentsTransition(cx,cy,false);//We move y down (in c's place)        
 
         if(b!=null)//If b is not a null leaf
         {
             y.setLeft(b);//We connect y to b  
             b.setParent(y);//We connect b to y
-            b.setLocationWithComponentsTransition(y.getX()-50,y.getY()+100);//We move it to it's coresponding coordinates (visually) 
+            b.setLocationWithComponentsTransition(y.getX()-50,y.getY()+100,false);//We move it to it's coresponding coordinates (visually) 
         
         }  
              
-        x.setLocationWithComponentsTransition(yX,yY);//We put x in y's place (visually)
+        x.setLocationWithComponentsTransition(yX,yY,false);//We put x in y's place (visually)
         x.setRight(y);//We make y x's right child
         if(x.getParentConnector()!=null)
         x.getParentConnector().getImage().setTransparency(255);
-        y.setLocationWithComponents(y.getX(),y.getY());//We refresh the connector's angle and position
+        y.setLocationWithComponents(y.getX(),y.getY(),false);//We refresh the connector's angle and position
         
         y.getParentConnector().getImage().setTransparency(255);//We make y's connector visible again    
 
@@ -515,8 +679,16 @@ public class RBTree extends Actor
             
 
         }
+        Greenfoot.delay(50);
     }
-    
+    public void setRoot(NodeRB r)
+    {
+        root=r;
+    }
+    public NodeRB getRoot()
+    {
+        return root;
+    }
     public NodePointer getNodePointer()
     {
         return nodePointer;

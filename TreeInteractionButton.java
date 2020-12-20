@@ -14,9 +14,9 @@ public class TreeInteractionButton  extends Button
     private Text text;
     private TextBox tb;
     private int timer=0;
-    public TreeInteractionButton(RBTree rbt)
+    public TreeInteractionButton(RBTree rbt,Background myWorld)
     {
-        super();
+        super(myWorld);
         t=rbt;
         tb=new TextBox(70,20);
         text = new Text();
@@ -28,7 +28,7 @@ public class TreeInteractionButton  extends Button
     }
         public void updateTextBox()
     {
-        if(Greenfoot.mouseClicked(tb))
+        if(Greenfoot.mouseClicked(tb)||Greenfoot.mouseClicked(text))
             {
                 MouseTracker.setCurrentFocus(tb);
                 String key=Greenfoot.getKey();//We clear key buffer
@@ -73,7 +73,10 @@ public class TreeInteractionButton  extends Button
         String auxString=text.getString();
         text.clear();
         if(!auxString.isEmpty())
-            function(auxString);
+            {
+                function(auxString);
+                world.addCurrentTreeToList();
+            }
     }
 
 

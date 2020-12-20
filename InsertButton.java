@@ -8,9 +8,9 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class InsertButton extends TreeInteractionButton
 {
-    public InsertButton(RBTree rbt)
+    public InsertButton(RBTree rbt,Background myWorld)
     {
-        super(rbt);
+        super(rbt,myWorld);
     }
     @Override
     public void setNormal()

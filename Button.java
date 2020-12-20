@@ -10,19 +10,17 @@ public class Button extends Fixed
 {
 
     private boolean pressed=false,focused=false;
-
+    protected Background world;
     private int xScale,yScale;
-    public Button()
+    public Button(Background myWorld)
     {
-
+        world=myWorld;
     }
 
     public void act() 
     {
         focused=false;
         CheckMouse();
-       
-
     }
 
 
