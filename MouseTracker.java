@@ -13,11 +13,6 @@ public class MouseTracker extends Actor
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     private static Actor currentFocus=null; 
-    public void act() 
-    {
-        if(Greenfoot.mouseClicked(null))
-            currentFocus=null;
-    }  
     public static void setCurrentFocus(Actor a)
     {
         currentFocus=a;

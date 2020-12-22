@@ -9,4 +9,6 @@ comment3.params=
 comment3.target=void\ setFocused()
 comment4.params=
 comment4.target=void\ setPressed()
-numComments=5
+comment5.params=k
+comment5.target=void\ function(java.lang.String)
+numComments=6

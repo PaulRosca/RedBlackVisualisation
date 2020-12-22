@@ -12,17 +12,21 @@ public class Text extends Fixed
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     private String text="";
-    public Text()
+    private Color color;
+    private int fontSize;
+    public Text(Color c,int fs)
     {
+        color=c;
+        fontSize=fs;
         updateImage();
     }
 
     public void updateImage()
     {
-        setImage(new GreenfootImage(text,21,Color.BLACK,null));
+        setImage(new GreenfootImage(text,fontSize,color,null));
     }
 
-    public void addChar(String c)
+    public void addString(String c)
     {
         if(!c.equals("0")||text.length()>0)
         text+=c;

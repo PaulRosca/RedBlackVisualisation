@@ -14,6 +14,8 @@ public class NodeRB extends Actor
     private FloatingText text;
     private Connector parentConnector;
     private NodePointer stickyPointer;
+    private int shiftedX;
+    private int shiftedY;
     public NodeRB(int k)
     {
         color = false;
@@ -25,18 +27,40 @@ public class NodeRB extends Actor
         text.addChar(String.valueOf(key));
         setImage("RedNode.png");
     }
-    
+    public void setKey(int k)
+    {
+        text.clear();
+        key=k;
+        text.addChar(String.valueOf(key));
+    }
     public void setParentConnector(Connector c)
     {
         parentConnector = c;
     }
-    public void setColor(boolean b)
+    private void setColorQuiet(boolean b)
     {
         color=b;
         if(color==true)
             setImage("BlackNode.png");
         else
             setImage("RedNode.png");
+    }
+    public void setColor(boolean b)
+    {
+        
+        NodePointer np=new NodePointer((Background) getWorld());
+        getWorld().addObject(np,getX(),getY());
+        np.setImage("NodePointerPurple.png");
+        np.getImage().setTransparency(0);
+        np.getImage().setTransparency(255);
+        np.focusOnThis();
+        Greenfoot.delay(50);
+        color=b;
+        if(color==true)
+            setImage("BlackNode.png");
+        else
+            setImage("RedNode.png");
+        getWorld().removeObject(np);
     }
     public void setLeft(NodeRB x)
     {
@@ -52,7 +76,22 @@ public class NodeRB extends Actor
     {
         parent=x;
     }
-
+    public void setShiftedX(int dx)
+    {
+        shiftedX=dx;
+    }
+    public int getShiftedX()
+    {
+        return shiftedX;
+    }
+    public void setShiftedY(int dy)
+    {
+        shiftedY=dy;
+    }
+    public int getShiftedY()
+    {
+        return shiftedY;
+    }
     public NodeRB getLeft()
     {
         return left;
@@ -85,19 +124,34 @@ public class NodeRB extends Actor
     {
         return text;
     }
-    public void setLocation(int x,int y)
+    public void setLocationWithPointer(int x,int y)
     {
-        super.setLocation(x,y);
-        if(stickyPointer!=null)
-            stickyPointer.setLocation(x,y);
-        
+        int dx=x-getX();
+        int dy=y-getY();
+        setLocation(x,y);
+        if(stickyPointer!=null)        
+                {
+                    stickyPointer.setLocation(x,y);
+                    stickyPointer.focusOnThis();
+                    shiftedX+=dx;
+                    shiftedY+=dy;
+                    NodeRB parent=this.getParent();
+                    while(parent!=null)
+                    {
+                        parent.setShiftedX(shiftedX);
+                        parent.setShiftedY(shiftedY);
+                        parent=parent.getParent();
+                    }
+                    //System.out.println(key+" "+dx+" "+shiftedX);
+                }
+         
     }
     public void setLocationWithComponents(int newX,int newY)
     {
         int dx,dy;
         dx=newX-this.getX();
         dy=newY-this.getY();
-        this.setLocation(newX,newY);
+        this.setLocationWithPointer(newX,newY);
         text.setLocation(newX,newY);
         if(parent!=null)//Unless we are moving the root itself
         {
@@ -115,13 +169,25 @@ public class NodeRB extends Actor
             left.setLocationWithComponents(left.getX()+dx,left.getY()+dy);
         if(right!=null)
             right.setLocationWithComponents(right.getX()+dx,right.getY()+dy);
+        
+       
     }
-    public void setLocationWithComponentsTransition(int newX,int newY)
+    public void clearShift(NodeRB node)
+    {
+        if(node==null)
+            return;
+        node.setShiftedX(0);
+        node.setShiftedY(0);
+        clearShift(node.getLeft());
+        clearShift(node.getRight());
+    }
+    public void setLocationWithComponentsTransition(int newX,int newY,boolean spacing)
     {
         int dX=newX-getX(),dY=newY-getY();
         int speedX=dX/50,speedY=dY/50;
         int counter = 0;
-        while(getX()!=newX)
+        clearShift(this);
+        while(getX()+shiftedX!=newX)
             {
                 if(counter==1)
                 {
@@ -129,12 +195,28 @@ public class NodeRB extends Actor
                     counter=0;
                 }
                 setLocationWithComponents(getX()+speedX,getY()+speedY);
+                if(spacing)
+                    {
+                        //shiftedX+=speedX;
+                        Background world=(Background)getWorld();
+                        //world.getScroller().scroll(-speedX,-speedY);
+                       // stickyPointer.focusOnThis();
+                    }
                 counter++;
+                //System.out.println("KEY : "+key+"getX : "+getX()+"x : "+newX+"\tSHIFTED : "+shiftedX);
             }
         
     }
     public void setStickyPointer(NodePointer np)
     {
         stickyPointer=np;
+    }
+    public NodeRB clone()
+    {
+        NodeRB node = new NodeRB(key);
+        node.setColorQuiet(color);
+        if(parentConnector!=null)
+            node.setParentConnector(new Connector());
+        return node;
     }
 }

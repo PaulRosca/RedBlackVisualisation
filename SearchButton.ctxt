@@ -1,8 +1,8 @@
 #BlueJ class context
 comment0.target=SearchButton
 comment0.text=\r\n\ Write\ a\ description\ of\ class\ SearchButton\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
-comment1.params=rbt
-comment1.target=SearchButton(RBTree)
+comment1.params=rbt\ myWorld
+comment1.target=SearchButton(RBTree,\ Background)
 comment2.params=
 comment2.target=void\ setNormal()
 comment3.params=

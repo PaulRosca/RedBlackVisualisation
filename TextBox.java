@@ -15,14 +15,12 @@ public class TextBox extends Fixed
     public TextBox(int x,int y)
     {
         setImage("TextBox.png");
-        GreenfootImage img = getImage();
-       // img.scale(x,y);
     }
     public void setFocused(boolean focused)
     {
-        if(focused)
-       setImage("TextBoxFocused.png");
+       if(focused)
+            setImage("TextBoxFocused.png");
        else
-       setImage("TextBox.png");
+            setImage("TextBox.png");
     }
 }

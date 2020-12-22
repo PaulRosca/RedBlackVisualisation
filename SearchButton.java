@@ -8,9 +8,9 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class SearchButton extends TreeInteractionButton
 {
-    public SearchButton(RBTree rbt)
+    public SearchButton(RBTree rbt,Background myWorld)
     {
-        super(rbt);
+        super(rbt,myWorld);
     }
     @Override
     public void setNormal()
@@ -32,8 +32,10 @@ public class SearchButton extends TreeInteractionButton
     @Override
     public void function(String k)
     {
+        world.getInfoAlgorithm().setOperation("Searching node with key "+k);
         int value=Integer.parseInt(k);
         t.search(value);
+        world.getInfoAlgorithm().clear();
         
     }
 }

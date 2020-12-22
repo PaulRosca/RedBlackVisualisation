@@ -6,13 +6,11 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Plus extends Button
+public class Plus extends WorldInteractionButton
 {
-    private Background world;
     public Plus(Background myWorld)
     {
-        super();
-        world=myWorld;
+        super(myWorld);
     }
     @Override
     public void setNormal()
@@ -31,4 +29,9 @@ public class Plus extends Button
     {
         setImage("PlusPressed.png");
     }   
+    @Override
+    public void function(String k)
+    {
+       world.increaseWorldSpeed();
+    }
 }
