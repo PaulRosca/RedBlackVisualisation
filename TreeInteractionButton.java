@@ -19,7 +19,7 @@ public class TreeInteractionButton  extends Button
         super(myWorld);
         t=rbt;
         tb=new TextBox(70,20);
-        text = new Text();
+        text = new Text(Color.BLACK,21);
     }
     public void act()
     {
@@ -30,11 +30,13 @@ public class TreeInteractionButton  extends Button
     {
         if(Greenfoot.mouseClicked(tb)||Greenfoot.mouseClicked(text))
             {
+                
                 MouseTracker.setCurrentFocus(tb);
                 String key=Greenfoot.getKey();//We clear key buffer
             }
         if(MouseTracker.getCurrentFocus()==tb)
         {
+            Greenfoot.setSpeed(49);
             tb.setFocused(true);
             String key=Greenfoot.getKey();
             if(Greenfoot.isKeyDown("backspace"))
@@ -51,12 +53,14 @@ public class TreeInteractionButton  extends Button
             else if(key!=null&&text.getString().length()<6)
             {
                 if(key.compareTo("0")>=0&&key.compareTo("9")<=0)
-                    text.addChar(key);  
+                    text.addString(key);  
             }
-
         }
         else
-            tb.setFocused(false);
+        {
+                
+                tb.setFocused(false);
+        }
     }
         public TextBox getTextBox()
     {
@@ -70,6 +74,7 @@ public class TreeInteractionButton  extends Button
     @Override
     protected void applyFunction()
     {
+        world.applyWorldSpeed();
         String auxString=text.getString();
         text.clear();
         if(!auxString.isEmpty())
@@ -77,6 +82,7 @@ public class TreeInteractionButton  extends Button
                 function(auxString);
                 world.addCurrentTreeToList();
             }
+        world.maxWorldSpeed();
     }
 
 

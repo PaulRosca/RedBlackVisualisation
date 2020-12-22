@@ -32,9 +32,10 @@ public class SearchButton extends TreeInteractionButton
     @Override
     public void function(String k)
     {
+        world.getInfoAlgorithm().setOperation("Searching node with key "+k);
         int value=Integer.parseInt(k);
         t.search(value);
-        
+        world.getInfoAlgorithm().clear();
         
     }
 }

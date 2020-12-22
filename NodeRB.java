@@ -14,7 +14,8 @@ public class NodeRB extends Actor
     private FloatingText text;
     private Connector parentConnector;
     private NodePointer stickyPointer;
-    
+    private int shiftedX;
+    private int shiftedY;
     public NodeRB(int k)
     {
         color = false;
@@ -51,11 +52,8 @@ public class NodeRB extends Actor
         getWorld().addObject(np,getX(),getY());
         np.setImage("NodePointerPurple.png");
         np.getImage().setTransparency(0);
-        if(b!=color)
-            {
-                np.getImage().setTransparency(255);
-                np.focusOnThis();
-            }
+        np.getImage().setTransparency(255);
+        np.focusOnThis();
         Greenfoot.delay(50);
         color=b;
         if(color==true)
@@ -78,7 +76,22 @@ public class NodeRB extends Actor
     {
         parent=x;
     }
-
+    public void setShiftedX(int dx)
+    {
+        shiftedX=dx;
+    }
+    public int getShiftedX()
+    {
+        return shiftedX;
+    }
+    public void setShiftedY(int dy)
+    {
+        shiftedY=dy;
+    }
+    public int getShiftedY()
+    {
+        return shiftedY;
+    }
     public NodeRB getLeft()
     {
         return left;
@@ -111,24 +124,34 @@ public class NodeRB extends Actor
     {
         return text;
     }
-    public void setLocationWithPointer(int x,int y,boolean spacing)
+    public void setLocationWithPointer(int x,int y)
     {
+        int dx=x-getX();
+        int dy=y-getY();
         setLocation(x,y);
-        if(stickyPointer!=null)
-            {
-                stickyPointer.setLocation(x,y);
-                if(spacing)
+        if(stickyPointer!=null)        
+                {
+                    stickyPointer.setLocation(x,y);
                     stickyPointer.focusOnThis();
-            }
-        
-        
+                    shiftedX+=dx;
+                    shiftedY+=dy;
+                    NodeRB parent=this.getParent();
+                    while(parent!=null)
+                    {
+                        parent.setShiftedX(shiftedX);
+                        parent.setShiftedY(shiftedY);
+                        parent=parent.getParent();
+                    }
+                    //System.out.println(key+" "+dx+" "+shiftedX);
+                }
+         
     }
-    public void setLocationWithComponents(int newX,int newY,boolean spacing)
+    public void setLocationWithComponents(int newX,int newY)
     {
         int dx,dy;
         dx=newX-this.getX();
         dy=newY-this.getY();
-        this.setLocationWithPointer(newX,newY,spacing);
+        this.setLocationWithPointer(newX,newY);
         text.setLocation(newX,newY);
         if(parent!=null)//Unless we are moving the root itself
         {
@@ -143,27 +166,44 @@ public class NodeRB extends Actor
         }
         //We move the children too
         if(left!=null)
-            left.setLocationWithComponents(left.getX()+dx,left.getY()+dy,spacing);
+            left.setLocationWithComponents(left.getX()+dx,left.getY()+dy);
         if(right!=null)
-            right.setLocationWithComponents(right.getX()+dx,right.getY()+dy,spacing);
+            right.setLocationWithComponents(right.getX()+dx,right.getY()+dy);
+        
+       
+    }
+    public void clearShift(NodeRB node)
+    {
+        if(node==null)
+            return;
+        node.setShiftedX(0);
+        node.setShiftedY(0);
+        clearShift(node.getLeft());
+        clearShift(node.getRight());
     }
     public void setLocationWithComponentsTransition(int newX,int newY,boolean spacing)
     {
         int dX=newX-getX(),dY=newY-getY();
         int speedX=dX/50,speedY=dY/50;
         int counter = 0;
-        int movedX=0;
-        while(getX()+movedX!=newX)
+        clearShift(this);
+        while(getX()+shiftedX!=newX)
             {
                 if(counter==1)
                 {
                     Greenfoot.delay(1);
                     counter=0;
                 }
-                setLocationWithComponents(getX()+speedX,getY()+speedY,spacing);
+                setLocationWithComponents(getX()+speedX,getY()+speedY);
                 if(spacing)
-                    movedX+=speedX;
+                    {
+                        //shiftedX+=speedX;
+                        Background world=(Background)getWorld();
+                        //world.getScroller().scroll(-speedX,-speedY);
+                       // stickyPointer.focusOnThis();
+                    }
                 counter++;
+                //System.out.println("KEY : "+key+"getX : "+getX()+"x : "+newX+"\tSHIFTED : "+shiftedX);
             }
         
     }

@@ -11,26 +11,31 @@ public class RBTree extends Actor
     private NodeRB root;//Tree root
     private Background world;//Current world
     private NodePointer nodePointer;//Pointer to current node (for visualisation)
+    private int rootDefaultX;
+    private int rootDefaultY;
+    private InfoAlgorithm infoAlg;
     public RBTree(Background myWorld)
     {
         setImage((GreenfootImage)(null));
         root=null;
         world=myWorld;
+        rootDefaultX=world.getRootDefaultX();
+        rootDefaultY=world.getRootDefaultY();
         nodePointer = new NodePointer(world);
-        world.addObject(nodePointer,world.getWidth()/2,200);
+        world.addObject(nodePointer,rootDefaultX,rootDefaultY);
         nodePointer.getImage().setTransparency(0);
+        infoAlg=world.getInfoAlgorithm();
     }
     private NodeRB searchNode(int k,boolean findFirst)
     {
         NodeRB y,x;
         y=null;
         x=root;
-        
         if(root!=null)
             nodePointer.setLocation(root.getX(),root.getY());
         else
 
-            nodePointer.setLocation(world.getWidth()/2+world.getScrolledX(),200+world.getScrolledY());
+            nodePointer.setLocation(rootDefaultX,rootDefaultY);
         nodePointer.getImage().setTransparency(255);
         nodePointer.focusOnThis();
         while(x!=null)
@@ -40,7 +45,19 @@ public class RBTree extends Actor
             if(x.getKey()==k&&findFirst)
                 return x;
             y=x;
-            x=k>x.getKey()?x.getRight():x.getLeft();//Updating the current node to find the searched node
+            infoAlg.setSubOperation("Comparing "+k+" with "+x.getKey());
+            if(k>x.getKey())
+            {
+                infoAlg.setDetails(k+" > "+x.getKey());
+                x=x.getRight();
+            }
+            else
+            {
+                infoAlg.setDetails(k+" <= "+x.getKey());
+                x=x.getLeft();
+            }
+
+            
         }
         Greenfoot.delay(50);
         
@@ -52,14 +69,17 @@ public class RBTree extends Actor
     {
         nodePointer.setImage("NodePointerYellow.png");
         NodeRB node=searchNode(k,true);
+        infoAlg.getDetails().clear();
         nodePointer.getImage().setTransparency(255);
         if(node==null)
         {
+            infoAlg.setSubOperation("Tree is empty");
             nodePointer.setImage("NodePointerRed.png");
         }
         else if(node.getKey()==k)
         {
             Greenfoot.delay(25);
+            infoAlg.setSubOperation("Node found");
             nodePointer.setImage("NodePointerGreen.png");
         }
         else
@@ -68,6 +88,7 @@ public class RBTree extends Actor
         nodePointer.setLocationTransition(node.getX()+50*leftChild,node.getY()+100);
         Greenfoot.delay(50);
         nodePointer.setImage("NodePointerRed.png");
+        infoAlg.setSubOperation("Node not found");
         }
         
         Greenfoot.delay(50);
@@ -78,6 +99,7 @@ public class RBTree extends Actor
     }
     private NodeRB successor(NodeRB node,NodePointer scsPointer)
     {
+        infoAlg.setSubOperation("Finding node's successor");
         NodeRB scs=null;
         NodeRB current=node.getRight();
         if(current==null)
@@ -85,6 +107,7 @@ public class RBTree extends Actor
         else
         world.addObject(scsPointer,current.getX(),current.getY());
         scsPointer.setImage("NodePointerOrange.png");
+        scsPointer.focusOnThis();
         while(current!=null)
         {
             scsPointer.setLocationTransition(current.getX(), current.getY());
@@ -98,14 +121,18 @@ public class RBTree extends Actor
     {
         NodeRB node = search(k);
         if(node==null||node.getKey()!=k)
-            return;
+            {
+                infoAlg.setSubOperation("Node not found");
+                return;
+            }
         delete(node);
     }
     private void delete(NodeRB node)
     {
         
         boolean blackNode=node.getColor();
-        int leftParent=0;          
+        boolean blackReplacement=true;
+        int leftParent=0;
         NodeRB child=null,parent=node.getParent();
         boolean moveAncestor=false;
         NodeRB ancestor=parent;
@@ -138,17 +165,24 @@ public class RBTree extends Actor
                 }
                 if(child!=null)
                 {
+                    blackReplacement=getColorOfNode(child);
+                    infoAlg.setSubOperation("Node has only right child");
                     int dx=child.getX()-node.getX();//Child dx
                     child.setParent(node.getParent());
                     world.removeObject(child.getParentConnector());
                     child.setParentConnector(node.getParentConnector());
                     node.setParentConnector(null);
+                    infoAlg.setDetails("Moving child in node's place");
                     child.setLocationWithComponentsTransition(node.getX(), node.getY(),false);
                     
                     if(child!=root&&leftNode==1)
                     child.setLocationWithComponentsTransition(child.getX()+dx, child.getY(),false);
                 }
-                else if(leftParent!=0)
+                else
+                {
+                    infoAlg.setSubOperation("Node has no children");
+                    infoAlg.setDetails("We simply delete it");
+                    if(leftParent!=0)
                     {
                         leftAncestor=leftParent;
                         while(ancestor.getParent()!=null&&leftAncestor==leftNode)
@@ -159,7 +193,7 @@ public class RBTree extends Actor
                         if(leftNode!=leftAncestor)
                         moveAncestor=true;
                     }
-                    
+                }
 
             }
             else if(node.getRight()==null)
@@ -167,6 +201,7 @@ public class RBTree extends Actor
                 
                 boolean rightNode=false;
                 child=node.getLeft();
+                blackReplacement=getColorOfNode(child);
                 if(parent==null)
                     root=child;
                 else
@@ -184,6 +219,8 @@ public class RBTree extends Actor
                 world.removeObject(child.getParentConnector());
                 child.setParentConnector(node.getParentConnector());
                 node.setParentConnector(null);
+                infoAlg.setSubOperation("Node has only left child");
+                infoAlg.setDetails("Moving child in node's place");
                 child.setLocationWithComponentsTransition(node.getX(), node.getY(),false);
                 if(child!=root&&rightNode)
                     child.setLocationWithComponentsTransition(child.getX()+dx, child.getY(),false);
@@ -196,18 +233,26 @@ public class RBTree extends Actor
         }
         else
         {
+            infoAlg.setSubOperation("Node has two children");
             nodePointer.getImage().setTransparency(255);
             NodePointer scsPointer = new NodePointer(world);
             Greenfoot.delay(50);
             NodeRB scs=successor(node,scsPointer);//We get the succesor of the node we need to delete
+            nodePointer.focusOnThis();
             Greenfoot.delay(50);
+            infoAlg.setDetails("Node gets key from successor");
             node.setKey(scs.getKey());
             //node.setColor(scs.getColor());
             Greenfoot.delay(50);
+            infoAlg.getDetails().clear();
+            infoAlg.setOperation("Deleting successor");
+            node.setStickyPointer(nodePointer);
             world.removeObject(scsPointer);
             delete(scs);
+            node.setStickyPointer(null);
             child=node;
             nodePointer.getImage().setTransparency(0);
+            return;
             
         }
         
@@ -231,8 +276,15 @@ public class RBTree extends Actor
                 
             }
         if(blackNode)
-            deleteColorFixup(child,parent);
-
+                {
+                    Greenfoot.delay(50);
+                    infoAlg.setSubOperation("Recoloring tree");
+                    Greenfoot.delay(50);
+                    deleteColorFixup(child,parent);
+                    infoAlg.getDetails().clear();
+                    infoAlg.setSubOperation("Recoloring finished");
+                    Greenfoot.delay(50);
+                }
     }
     private boolean getColorOfNode(NodeRB node)
     {
@@ -242,7 +294,110 @@ public class RBTree extends Actor
     }
     private void deleteColorFixup(NodeRB x,NodeRB xParent)
     {
-
+        if(x!=root&&getColorOfNode(x)==true)
+        {
+            NodeRB w;
+            if(x==xParent.getLeft())
+            {
+                w=xParent.getRight();
+                if(getColorOfNode(w)==false)
+                    {
+                        infoAlg.setSubOperation("Case 1");
+                        infoAlg.setDetails("Coloring uncle black");
+                        w.setColor(true);
+                        infoAlg.setDetails("Coloring parent red");
+                        xParent.setColor(false);
+                        infoAlg.setDetails("Rotating parent left");
+                        leftRotate(xParent);
+                        w=xParent.getRight();
+                    }
+                if(getColorOfNode(w)==true)
+                {
+                    if(getColorOfNode(w.getLeft())==true&&getColorOfNode(w.getRight())==true)
+                    {
+                        infoAlg.setSubOperation("Case 2");
+                        infoAlg.setDetails("Coloring uncle red");
+                        w.setColor(false);
+                        infoAlg.setDetails("Moving to parent");
+                        deleteColorFixup(xParent,xParent.getParent());
+                        return;
+                    }
+                    if(getColorOfNode(w.getLeft())==false&&getColorOfNode(w.getRight())==true)
+                    {
+                        infoAlg.setSubOperation("Case 3");
+                        infoAlg.setDetails("Coloring close cousin black");
+                        w.getLeft().setColor(true);
+                        infoAlg.setDetails("Coloring uncle red");
+                        w.setColor(false);
+                        infoAlg.setDetails("Rotating uncle right");
+                        rightRotate(w);
+                        w=xParent.getRight();
+                    }
+                    infoAlg.setSubOperation("Case 4");
+                    infoAlg.setDetails("Coloring uncle same as parent");
+                    w.setColor(getColorOfNode(xParent));
+                    infoAlg.setDetails("Coloring parent black");
+                    xParent.setColor(true);
+                    infoAlg.setDetails("Coloring far cousin black");
+                    w.getRight().setColor(true);
+                    infoAlg.setDetails("Rotating parent left");
+                    leftRotate(xParent);
+                }
+            }
+            else
+            {
+                w=xParent.getLeft();
+                if(getColorOfNode(w)==false)
+                    {
+                        infoAlg.setSubOperation("Case 1");
+                        infoAlg.setDetails("Coloring uncle black");
+                        w.setColor(true);
+                        infoAlg.setDetails("Coloring parent red");
+                        xParent.setColor(false);
+                        infoAlg.setDetails("Rotating parent right");
+                        rightRotate(xParent);
+                        w=xParent.getLeft();
+                    }
+                if(getColorOfNode(w)==true)
+                {
+                    if(getColorOfNode(w.getLeft())==true&&getColorOfNode(w.getRight())==true)
+                    {
+                        infoAlg.setSubOperation("Case 2");
+                        infoAlg.setDetails("Coloring uncle red");
+                        w.setColor(false);
+                        infoAlg.setDetails("Moving to parent");
+                        deleteColorFixup(xParent,xParent.getParent());
+                        return;
+                    }
+                    if(getColorOfNode(w.getRight())==false&&getColorOfNode(w.getLeft())==true)
+                    {
+                        infoAlg.setSubOperation("Case 3");
+                        infoAlg.setDetails("Coloring near cousin black");
+                        w.getRight().setColor(true);
+                        infoAlg.setDetails("Coloring uncle red");
+                        w.setColor(false);
+                        infoAlg.setDetails("Rotating uncle left");
+                        leftRotate(w);
+                        w=xParent.getLeft();
+                    }
+                    infoAlg.setSubOperation("Case 4");
+                    infoAlg.setDetails("Coloring uncle same as parent");
+                    w.setColor(getColorOfNode(xParent));
+                    infoAlg.setDetails("Coloring parent black");
+                    xParent.setColor(true);
+                    infoAlg.setDetails("Coloring far cousin black");
+                    w.getLeft().setColor(true);
+                    infoAlg.setDetails("Rotating parent right");
+                    rightRotate(xParent);
+                }
+            }
+        }
+        if(x!=null)
+        {
+            infoAlg.setSubOperation("Case 0");
+            infoAlg.setDetails("Coloring node black");
+            x.setColor(true);
+        }
     }
     public void insert(int k)
     {
@@ -251,17 +406,19 @@ public class RBTree extends Actor
         y=searchNode(k,false);//Parent node of k
         nodePointer.getImage().setTransparency(255);
         newNode.setParent(y);//Setting the newly inserted node's parent
+        infoAlg.getDetails().clear();
         if(y==null)
         {
+            infoAlg.setSubOperation("Tree was empty");
             root=newNode;
             int scrolledX=world.getScrolledX();
             int scrolledY=world.getScrolledY();
-            world.addObject(newNode,world.getWidth()/2+scrolledX,200+scrolledY);
-            world.addObject(newNode.getText(),world.getWidth()/2+scrolledX,200+scrolledY);
+            world.addObject(newNode,rootDefaultX,rootDefaultY);
+            world.addObject(newNode.getText(),rootDefaultX,rootDefaultY);
         }
         else
         {
-
+            infoAlg.getSubOperation().clear();
             Connector auxConnector = new Connector();//Creating a visual connector to the parent node
             newNode.setParentConnector(auxConnector);//Attributing the connector to the newly inserted node
             int yX,yY;//Parent coodinates
@@ -313,14 +470,15 @@ public class RBTree extends Actor
             auxConnector.getImage().setTransparency(255);
 
         }
-        
         Greenfoot.delay(50);
-        newNode.setStickyPointer(nodePointer);
+        infoAlg.setSubOperation("Trying to recolor tree");
+        Greenfoot.delay(50);
         insertColorFixup(newNode);
-        newNode.setStickyPointer(null);
-        
+        infoAlg.getDetails().clear();
+        infoAlg.setSubOperation("Recoloring finished");
         Greenfoot.delay(50);
         nodePointer.getImage().setTransparency(0);
+        
 
     }
 
@@ -337,13 +495,9 @@ public class RBTree extends Actor
             return;
         int leftParent;
         leftParent=(parent.getParent().getLeft()==parent)?1:-1;
-        fixSpacing(parent.getParent(),leftChild);
+        fixSpacing(parent.getParent(),leftParent);
         if(leftChild!=leftParent)
-            {
-                spaceNodes(parent.getParent(),-leftChild);
                 spaceNodes(parent,leftChild);
-            }
-        
     }
     private void spaceNodes(NodeRB node,int right)
     {
@@ -362,8 +516,12 @@ public class RBTree extends Actor
                     uncle=z.getParent().getParent().getRight();
                     if(uncle!=null && uncle.getColor()==false)
                     {
+                        infoAlg.setSubOperation("Case 1");
+                        infoAlg.setDetails("Coloring parent black");
                         z.getParent().setColor(true);//We make the parent black
+                        infoAlg.setDetails("Coloring uncle black");
                         uncle.setColor(true);//We make the uncle black
+                        infoAlg.setDetails("Coloring grandparent red");
                         z.getParent().getParent().setColor(false);//We make the grandparent red
                         z=z.getParent().getParent();//We make the current node the grandparent
                     }
@@ -371,12 +529,18 @@ public class RBTree extends Actor
                     {
                         if(z==z.getParent().getRight())
                         {
+                            infoAlg.setSubOperation("Case 2");
                             z=z.getParent();
+                            infoAlg.setDetails("Rotating parent left");
                             leftRotate(z);
                         }
+                        infoAlg.setSubOperation("Case 3");
+                        infoAlg.setDetails("Coloring parent black");
                         z.getParent().setColor(true);//We make the parent black
+                        infoAlg.setDetails("Coloring grandparent red");
                         z.getParent().getParent().setColor(false);//We make the grandparent red;
-                        rightRotate(z.getParent().getParent());  
+                        infoAlg.setDetails("Rotating grandparent right");
+                        rightRotate(z.getParent().getParent());
                         
                     }
                 }
@@ -385,8 +549,12 @@ public class RBTree extends Actor
                     uncle=z.getParent().getParent().getLeft();
                     if(uncle!=null && uncle.getColor()==false)
                     {
+                        infoAlg.setSubOperation("Case 1");
+                        infoAlg.setDetails("Coloring parent black");
                         z.getParent().setColor(true);//We make the parent black
+                        infoAlg.setDetails("Coloring uncle black");
                         uncle.setColor(true);//We make the uncle black
+                        infoAlg.setDetails("Coloring grandparent red");
                         z.getParent().getParent().setColor(false);//We make the grandparent red
                         z=z.getParent().getParent();//We make the current node the grandparent
                     }
@@ -394,21 +562,33 @@ public class RBTree extends Actor
                     {
                         if(z==z.getParent().getLeft())
                         {
+                            infoAlg.setSubOperation("Case 2");
                             z=z.getParent();
+                            infoAlg.setDetails("Rotating parent right");
                             rightRotate(z);
                         }
+                        infoAlg.setSubOperation("Case 3");
+                        infoAlg.setDetails("Coloring parent black");
                         z.getParent().setColor(true);//We make the parent black
+                        infoAlg.setDetails("Coloring grandparent red");
                         z.getParent().getParent().setColor(false);//We make the grandparent red;
+                        infoAlg.setDetails("Rotating grandparent left");
                         leftRotate(z.getParent().getParent());
                     }
                 
                 }
             }
-        root.setColor(true); // We make the root black
-        
+        if(root.getColor()==false)
+            {
+                infoAlg.setSubOperation("Case 0");
+                infoAlg.setDetails("Coloring root black");
+                root.setColor(true); // We make the root black
+            }
     }
     private void leftRotate(NodeRB x)
     {
+        x.setStickyPointer(nodePointer);
+        x.setLocationWithPointer(x.getX(),x.getY());
         NodeRB parent,b,a,y;//Auxiliary nodes used in rotation
         parent=x.getParent();//We get the parent of the sub-tree rooted in x
         y=x.getRight();//We get x's right child (y)
@@ -468,12 +648,13 @@ public class RBTree extends Actor
         
         
         
-        
-        y.setLocationWithComponentsTransition(xX,xY,false);//We put y in x's place (visually)
+        //-(nodePointer.getX()-world.getWidth()/2)
+        //-(nodePointer.getY()-200)
+        y.setLocationWithComponentsTransition(xX-x.getShiftedX(),xY-x.getShiftedY(),false);//We put y in x's place (visually)
         y.setLeft(x);//We make x y's left child
         if(y.getParentConnector()!=null)
         y.getParentConnector().getImage().setTransparency(255);
-        x.setLocationWithComponents(x.getX(),x.getY(),false);//We refresh the connector's angle and position
+        x.setLocationWithComponents(x.getX(),x.getY());//We refresh the connector's angle and position
         
         
         
@@ -545,10 +726,13 @@ public class RBTree extends Actor
 
         }
         Greenfoot.delay(50);
-
+        x.setStickyPointer(null);
+        root.clearShift(root);
     }
     private void rightRotate(NodeRB y)
     {
+        y.setStickyPointer(nodePointer);
+        y.setLocationWithPointer(y.getX(),y.getY());
         NodeRB parent,b,c,x;//Auxiliary nodes used in rotation
         parent=y.getParent();//We get the parent of the sub-tree rooted in y
         x=y.getLeft();//We get y's left child (x)
@@ -568,8 +752,8 @@ public class RBTree extends Actor
                 parent.setRight(x);//We make x take it's place
         x.setParent(parent);//We connect x to it's new parent
         
-        int yX=y.getX(),yY=y.getY();
         
+        int yX=y.getX(),yY=y.getY();
         
         y.setParent(x);//We make x y's parent
         
@@ -597,7 +781,9 @@ public class RBTree extends Actor
         y.getParentConnector().getImage().setTransparency(0);//We make y's connector invisible (to avoid visual distorsion)
         if(x.getParentConnector()!=null)
         x.getParentConnector().getImage().setTransparency(0);
-        y.setLocationWithComponentsTransition(cx,cy,false);//We move y down (in c's place)        
+        
+        y.setLocationWithComponentsTransition(cx,cy,false);//We move y down (in c's place)
+        
 
         if(b!=null)//If b is not a null leaf
         {
@@ -606,12 +792,14 @@ public class RBTree extends Actor
             b.setLocationWithComponentsTransition(y.getX()-50,y.getY()+100,false);//We move it to it's coresponding coordinates (visually) 
         
         }  
-             
-        x.setLocationWithComponentsTransition(yX,yY,false);//We put x in y's place (visually)
+        
+        //-(nodePointer.getX()-world.getWidth()/2)
+        //-(nodePointer.getY()-200)
+        x.setLocationWithComponentsTransition(yX-y.getShiftedX(),yY-y.getShiftedY(),false);//We put x in y's place (visually)
         x.setRight(y);//We make y x's right child
         if(x.getParentConnector()!=null)
         x.getParentConnector().getImage().setTransparency(255);
-        y.setLocationWithComponents(y.getX(),y.getY(),false);//We refresh the connector's angle and position
+        y.setLocationWithComponents(y.getX(),y.getY());//We refresh the connector's angle and position
         
         y.getParentConnector().getImage().setTransparency(255);//We make y's connector visible again    
 
@@ -680,6 +868,8 @@ public class RBTree extends Actor
 
         }
         Greenfoot.delay(50);
+        y.setStickyPointer(null);
+        root.clearShift(root);
     }
     public void setRoot(NodeRB r)
     {

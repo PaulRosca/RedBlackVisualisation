@@ -15,15 +15,15 @@ public class NodePointer extends Actor
     }
     public void focusOnThis()
     {
-        world.getScroller().scroll(world.getWidth()/2-getX(),200-getY());
+        world.getScroller().scroll(world.getRootDefaultX()-getX(),world.getRootDefaultY()-getY());
     }
     public void setLocationTransition(int x,int y)
     {
        int dX=x-getX(),dY=y-getY();
        int speedX=dX/50,speedY=dY/50;
        int counter=0;
-       int movedX=0;
-        while(getX()+movedX!=x)
+       int shiftedX=0;
+        while(getX()+shiftedX!=x)
         {
             if(counter==1)
                 {
@@ -32,7 +32,7 @@ public class NodePointer extends Actor
                 }
             setLocation(getX()+speedX,getY()+speedY);
             focusOnThis();
-            movedX+=speedX;
+            shiftedX+=speedX;
             counter++;
         }
         

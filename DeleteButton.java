@@ -32,8 +32,9 @@ public class DeleteButton extends TreeInteractionButton
     @Override
     public void function(String k)
     {
+        world.getInfoAlgorithm().setOperation("Deleting node with key "+k);
         int value=Integer.parseInt(k);
         t.deleteKey(value);
-        
+        world.getInfoAlgorithm().clear();
     }
 }

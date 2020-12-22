@@ -2,9 +2,10 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.List;
 import java.util.ArrayList;
 /**
- * Write a description of class Background here.
- * 
- * @author (your name) 
+ * This class creates the background (canvas) in which the tree will be built.
+ * <p>
+ * The class is also responsible for spawining the UI buttons and handling operation skipping (moving between iterations of the tree created by altering it)
+ * @author Roșca Paul-Teodor 
  * @version (a version number or a date)
  */
 public class Background extends World
@@ -78,6 +79,9 @@ public class Background extends World
     
     private Scroller scroller;
     private RBTree rbt;
+    private int rootDefaultX;
+    private int rootDefaultY;
+    
     private boolean pressed=false;
     private int initialPositionX,initialPositionY;
     private MouseInfo mouse;
@@ -95,11 +99,21 @@ public class Background extends World
     private InfoNodePointer inp;
     private boolean visibleINP;
     private int worldSpeed=55;
+    private InfoAlgorithm ia;
+    private boolean visibleIA;
     public Background()
     {    
         super(1000, 600, 1,false);
+        rootDefaultX=getWidth()/2;
+        rootDefaultY=150;
+        ia=new InfoAlgorithm();
+        addObject(ia,140,65);
+        addObject(ia.getOperation(),135,40);
+        addObject(ia.getSubOperation(),135,65);
+        addObject(ia.getDetails(),135,90);
+        visibleIA=true;
         treeList.add(new ArrayList<NodeInformation>());
-        Greenfoot.setSpeed(worldSpeed);
+        maxWorldSpeed();
         scroller = new Scroller(this);
         rbt = new RBTree(this);
         addObject(rbt,0,0);
@@ -156,28 +170,46 @@ public class Background extends World
         String key=Greenfoot.getKey();
         if(key!=null)
         {
-            if(key.equals(","))
-                if(!visibleIUI)
+            switch(key)
+            {
+                case ",":
+                    if(!visibleIUI)
+                        {
+                            addObject(iui,this.getWidth()/2,this.getHeight()/2-25);
+                            visibleIUI=true;
+                        }
+                    else
+                        {
+                            removeObject(iui);
+                            visibleIUI=false;
+                        }
+                        break;
+                case ".":
+                    if(!visibleINP)
+                        {
+                            addObject(inp,this.getWidth()/2,this.getHeight()/2);
+                            visibleINP=true;
+                        }
+                    else
+                        {
+                            removeObject(inp);
+                            visibleINP=false;
+                        }
+                    break;
+                case "space":
+                    if(!visibleIA)
                     {
-                        addObject(iui,this.getWidth()/2,this.getHeight()/2-25);
-                        visibleIUI=true;
+                        ia.makeVisible();
+                        visibleIA=true;
                     }
-                else
+                    else
                     {
-                        removeObject(iui);
-                        visibleIUI=false;
+                        ia.makeInvisible();
+                        visibleIA=false;
                     }
-             else if(key.equals("."))
-                if(!visibleINP)
-                    {
-                        addObject(inp,this.getWidth()/2,this.getHeight()/2);
-                        visibleINP=true;
-                    }
-                else
-                    {
-                        removeObject(inp);
-                        visibleINP=false;
-                    }
+                    
+                
+            }
         }
     }
     private void checkMouse()
@@ -191,13 +223,30 @@ public class Background extends World
         else if(Greenfoot.mouseClicked(null))
         {
             pressed=false;
-            MouseTracker.setCurrentFocus(null);
+            Actor a = Greenfoot.getMouseInfo().getActor();
+            if(a==null||!(a instanceof TextBox))
+                {
+                    MouseTracker.setCurrentFocus(null);
+                    maxWorldSpeed();
+                }
         }
 
     }
     public void centerView()
     {
         scroller.scroll(-scroller.getScrolledX(),-scroller.getScrolledY());
+    }
+    public InfoAlgorithm getInfoAlgorithm()
+    {
+        return ia;
+    }
+    public int getRootDefaultX()
+    {
+        return rootDefaultX;
+    }
+        public int getRootDefaultY()
+    {
+        return rootDefaultY;
     }
     public Scroller getScroller()
     {
@@ -214,18 +263,23 @@ public class Background extends World
     public void increaseWorldSpeed()
     {
         worldSpeed+=2;
-        Greenfoot.setSpeed(worldSpeed);
     }
     public void decreaseWorldSpeed()
     {
         if(worldSpeed<40)
             return;
         worldSpeed-=2;
-        Greenfoot.setSpeed(worldSpeed);
     }
     public void resetWorldSpeed()
     {
         worldSpeed=55;
+    }
+    public void maxWorldSpeed()
+    {
+        Greenfoot.setSpeed(100);
+    }
+    public void applyWorldSpeed()
+    {
         Greenfoot.setSpeed(worldSpeed);
     }
     private NodeRB addNodesInfoToList(NodeRB n,List<NodeInformation> l,boolean memOnly)
@@ -238,12 +292,12 @@ public class Background extends World
             nodeInfo.setNode(currentNode);
             if(!memOnly)
             {
-                nodeInfo.setNodeCoordinates(n.getX(), n.getY());
+                nodeInfo.setNodeCoordinates(n.getX()-getScrolledX(), n.getY()-getScrolledY());
                 Connector con=n.getParentConnector();
                 if(con!=null)
                 {
                     nodeInfo.setConnectorLength(con.getImage().getHeight());
-                    nodeInfo.setConnectCoordinates(con.getX(), con.getY());
+                    nodeInfo.setConnectCoordinates(con.getX()-getScrolledX(), con.getY()-getScrolledY());
                     nodeInfo.setConnectorRotation(con.getRotation());
                 }
             }
@@ -282,30 +336,6 @@ public class Background extends World
             this.removeObject(n);
         }
     }
-    /*
-    private NodeRB addUnaddedNodesInfoToList(NodeRB n,List<NodeInformation> l)
-    {
-        if(n==null)
-            return null;
-
-            NodeInformation nodeInfo = new NodeInformation();
-            NodeRB currentNode = n.clone();
-            nodeInfo.setNode(currentNode);
-            
-            NodeRB leftChild,rightChild;
-            leftChild=addUnaddedNodesInfoToList(n.getLeft(),l);
-            rightChild=addUnaddedNodesInfoToList(n.getRight(),l);
-            currentNode.setLeft(leftChild);
-            currentNode.setRight(rightChild);
-            if(leftChild!=null)
-                leftChild.setParent(currentNode);
-            if(rightChild!=null)
-                rightChild.setParent(currentNode);
-            l.add(nodeInfo);
-            return currentNode;
- 
-    }
-    */
     private void buildTree(int index)
     {
         List<NodeInformation> l = treeList.get(index);
@@ -328,8 +358,6 @@ public class Background extends World
                 }
         }
         rbt.setRoot(n);
-        
-
     }
     private void skip(int i)
     {

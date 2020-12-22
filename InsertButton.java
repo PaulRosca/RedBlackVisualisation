@@ -32,8 +32,9 @@ public class InsertButton extends TreeInteractionButton
     @Override
     public void function(String k)
     {
+        world.getInfoAlgorithm().setOperation("Inserting node with key "+k);
         int value=Integer.parseInt(k);
         t.insert(value);
-        
+        world.getInfoAlgorithm().clear();
     }
 }
