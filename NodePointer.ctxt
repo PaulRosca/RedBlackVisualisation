@@ -1,10 +1,13 @@
 #BlueJ class context
 comment0.target=NodePointer
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ NodePointer\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment0.text=\r\n\ This\ class\ represents\ a\ visual\ pointer\ to\ a\ node.\r\n\ \r\n\ @author\ Ro\u0219ca\ Paul-Teodor\ \r\n\ @version\ 1.0\ (22/12/2020)\r\n
 comment1.params=myWorld
 comment1.target=NodePointer(Background)
+comment1.text=\r\n\ Constructor\ for\ our\ Node\ Pointer.\ We\ only\ set\ the\ world\ of\ the\ object\ here.\r\n\ \r\n\ @param\ myWorld\ the\ world\ in\ which\ this\ object\ is\ present\r\n
 comment2.params=
 comment2.target=void\ focusOnThis()
+comment2.text=\r\n\ Method\ for\ scrolling\ the\ world\ in\ such\ a\ way\ that\ this\ object\ gets\ in\ the\ defaul\ root\ coordinates\r\n\ @see\ Background\#RootDefaultX\r\n\ @see\ Background\#RootDefaultY\r\n
 comment3.params=x\ y
 comment3.target=void\ setLocationTransition(int,\ int)
+comment3.text=\r\n\ Method\ for\ moving\ the\ object\ the\ object\ in\ the\ world\ slowly.\r\n\ <p>\r\n\ It\ is\ designed\ to\ work\ on\ this\ project\ specific\ possible\ new\ X\ and\ new\ Y\ values\ \r\n\ (in\ multiples\ of\ 50)\r\n\ \r\n\ @param\ x\ new\ X\ coordinate\r\n\ @param\ y\ new\ Y\ coordinate\r\n
 numComments=4

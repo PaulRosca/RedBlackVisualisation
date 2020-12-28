@@ -1,16 +1,21 @@
 #BlueJ class context
 comment0.target=Text
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ Text\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment0.text=\r\n\ This\ class\ is\ used\ to\ hold\ and\ edit\ a\ string\ in\ the\ form\ of\ a\ visual\ object\r\n\ \r\n\ @see\ Fixed\r\n\ \r\n\ @author\ Ro\u0219ca\ Paul-Teodor\ \r\n\ @version\ 1.0\ (22/12/2020)\r\n
 comment1.params=c\ fs
 comment1.target=Text(greenfoot.Color,\ int)
+comment1.text=\r\n\ Constructor\ for\ the\ Text\ object.\ In\ this\ we\ set\ the\ color\ and\ the\ font\ size\ of\ the\ text.\r\n\ \r\n\ @param\ c\ the\ color\ desired\ for\ the\ text\r\n\ @param\ fs\ the\ font\ size\ desired\ for\ the\ text\r\n
 comment2.params=
 comment2.target=void\ updateImage()
+comment2.text=\r\n\ Method\ used\ to\ update\ the\ image\ of\ the\ object\ with\ the\ current\ text\r\n
 comment3.params=c
 comment3.target=void\ addString(java.lang.String)
+comment3.text=\r\n\ Method\ used\ to\ add\ a\ String\ to\ our\ current\ text\r\n\ \r\n\ @param\ c\ the\ string\ desired\ to\ be\ added\ to\ our\ text\r\n
 comment4.params=
 comment4.target=void\ removeChar()
+comment4.text=\r\n\ Method\ used\ for\ removing\ the\ last\ character\ in\ our\ text\r\n
 comment5.params=
 comment5.target=void\ clear()
+comment5.text=\r\n\ Method\ used\ for\ flushing\ the\ text\ of\ our\ object\r\n
 comment6.params=
 comment6.target=java.lang.String\ getString()
 numComments=7

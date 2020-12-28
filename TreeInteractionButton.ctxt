@@ -1,16 +1,20 @@
 #BlueJ class context
 comment0.target=TreeInteractionButton
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ TreeInteractionButton\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment0.text=\r\n\ This\ is\ a\ superclass\ for\ all\ the\ UI\ buttons\ that\ have\ functions\ related\ to\ the\ tree.\r\n\ <p>\r\n\ This\ class\ handles\ user's\ interaction\ with\ the\ button's\ assigned\ TextBox\r\n\ @see\ Button\r\n\ \r\n\ @author\ Ro\u0219ca\ Paul-Teodor\ \r\n\ @version\ 1.0\ (22/12/2020)\r\n
 comment1.params=rbt\ myWorld
 comment1.target=TreeInteractionButton(RBTree,\ Background)
+comment1.text=\r\n\ Constructor\ for\ the\ button.\r\n\ \r\n\ @param\ rbt\ the\ tree\ to\ which\ the\ button\ is\ connected\ to\r\n\ @param\ myWorld\ the\ world\ in\ which\ the\ button\ is\ present\r\n
 comment2.params=
 comment2.target=void\ act()
+comment2.text=\r\n\ Method\ that\ contiounsly\ updates\ the\ button's\ TextBox\ \r\n\ (while\ also\ doing\ the\ previous\ functions\ from\ {@link\ Button.act()})\r\n
 comment3.params=
 comment3.target=void\ updateTextBox()
+comment3.text=\r\n\ Method\ that\ updates\ the\ TextBox\ according\ to\ user's\ input\r\n
 comment4.params=
 comment4.target=TextBox\ getTextBox()
 comment5.params=
 comment5.target=Text\ getText()
 comment6.params=
 comment6.target=void\ applyFunction()
+comment6.text=\r\n\ Method\ that\ overrides\ {@link\ Button.applyFunction()}\ for\ adapting\ the\ world's\ speed\ and\ applying\ the\ fucntion\r\n\ with\ the\ String\ in\ {@link\ text}\r\n
 numComments=7

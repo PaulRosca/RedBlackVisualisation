@@ -1,28 +1,33 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class Connector here.
+ * This class represents the visual connector from a node to it's parent.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Roșca Paul-Teodor 
+ * @version 1.0 (22/12/2020)
  */
 public class Connector extends Actor
 {
     /**
-     * Act - do whatever the Connector wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
+     * Default consturctor for creating a connector
      */
     public Connector()
     {
     }
-
+    /**
+     * Constructor for creating a connector of a specific size
+     * @param x length
+     * @param y width
+     */
     public Connector(int x,int y)
     {
         GreenfootImage img=getImage();
         img.scale(x,y);
         setImage(img);
     }
-
+    /**
+     * Method for chaning the size of the connector 
+     */
     public void setScale(int x,int y) 
     {
         GreenfootImage img=getImage();

@@ -1,21 +1,27 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class TextBox here.
+ * This class represents a canvas for a field in which the user can enter information
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @see Fixed
+ * 
+ * @author Roșca Paul-Teodor 
+ * @version 1.0 (22/12/2020)
  */
 public class TextBox extends Fixed
 {
     /**
-     * Act - do whatever the TextBox wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
+     * Constructor for our TextBox. It just sets it's image.
      */
-    public TextBox(int x,int y)
+    public TextBox()
     {
         setImage("TextBox.png");
     }
+    
+    /**
+     * Method that chnages the TextBox's image according to it's state (focused/unfocused)
+     * @param focused flag that tells us if the user is focused on this textbox
+     */
     public void setFocused(boolean focused)
     {
        if(focused)

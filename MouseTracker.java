@@ -1,18 +1,19 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class MouseTracker here.
+ * This class is used for statically holding the Actor to which the world is currently focused on and changing 
+ * which actor that is.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Roșca Paul-Teodor 
+ * @version 1.0 (22/12/2020)
  */
 public class MouseTracker extends Actor
 {
     /**
-     * Act - do whatever the MouseTracker wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
+     * The actor to which the world is currently focused on
      */
     private static Actor currentFocus=null; 
+    
     public static void setCurrentFocus(Actor a)
     {
         currentFocus=a;

@@ -1,11 +1,13 @@
 #BlueJ class context
 comment0.target=Connector
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ Connector\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment0.text=\r\n\ This\ class\ represents\ the\ visual\ connector\ from\ a\ node\ to\ it's\ parent.\r\n\ \r\n\ @author\ Ro\u0219ca\ Paul-Teodor\ \r\n\ @version\ 1.0\ (22/12/2020)\r\n
 comment1.params=
 comment1.target=Connector()
-comment1.text=\r\n\ Act\ -\ do\ whatever\ the\ Connector\ wants\ to\ do.\ This\ method\ is\ called\ whenever\r\n\ the\ 'Act'\ or\ 'Run'\ button\ gets\ pressed\ in\ the\ environment.\r\n
+comment1.text=\r\n\ Default\ consturctor\ for\ creating\ a\ connector\r\n
 comment2.params=x\ y
 comment2.target=Connector(int,\ int)
+comment2.text=\r\n\ Constructor\ for\ creating\ a\ connector\ of\ a\ specific\ size\r\n\ @param\ x\ length\r\n\ @param\ y\ width\r\n
 comment3.params=x\ y
 comment3.target=void\ setScale(int,\ int)
+comment3.text=\r\n\ Method\ for\ chaning\ the\ size\ of\ the\ connector\ \r\n
 numComments=4

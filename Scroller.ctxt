@@ -1,14 +1,14 @@
 #BlueJ class context
 comment0.target=Scroller
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ Scroller\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment0.text=\r\n\ This\ class\ is\ responsible\ for\ scrolling\ the\ background\ and\ hold\ information\ about\ how\ much\ we've\ scrolled.\r\n\ <p>\r\n\ Class\ inspired\ by\ https\://www.greenfoot.org/scenarios/18226\r\n\ \r\n\ @author\ Ro\u0219ca\ Paul-Teodor\ \r\n\ @version\ 1.0\ (22/12/2020)\r\n
 comment1.params=myWorld
 comment1.target=Scroller(greenfoot.World)
-comment2.params=
-comment2.target=void\ act()
-comment3.params=dx\ dy
-comment3.target=void\ scroll(int,\ int)
+comment1.text=\r\n\ Constructor\ for\ our\ scroller.\r\n\ \r\n\ @param\ myWorld\ the\ world\ which\ we\ will\ scroll\r\n
+comment2.params=dx\ dy
+comment2.target=void\ scroll(int,\ int)
+comment2.text=\r\n\ Method\ for\ scrolling\ the\ world.\r\n\ \r\n\ @param\ dx\ the\ number\ of\ pixels\ we\ scroll\ on\ X\ axis\r\n\ @param\ dy\ the\ number\ of\ pixels\ we\ scroll\ on\ Y\ axis\r\n
+comment3.params=
+comment3.target=int\ getScrolledX()
 comment4.params=
-comment4.target=int\ getScrolledX()
-comment5.params=
-comment5.target=int\ getScrolledY()
-numComments=6
+comment4.target=int\ getScrolledY()
+numComments=5

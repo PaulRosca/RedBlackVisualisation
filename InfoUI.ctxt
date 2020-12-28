@@ -1,7 +1,4 @@
 #BlueJ class context
 comment0.target=InfoUI
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ InfoUI\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
-comment1.params=
-comment1.target=void\ act()
-comment1.text=\r\n\ Act\ -\ do\ whatever\ the\ InfoUI\ wants\ to\ do.\ This\ method\ is\ called\ whenever\r\n\ the\ 'Act'\ or\ 'Run'\ button\ gets\ pressed\ in\ the\ environment.\r\n
-numComments=2
+comment0.text=\r\n\ This\ class\ represents\ a\ window\ that\ shows\ information\ about\ the\ UI\ Buttons\r\n\ \r\n\ @see\ Fixed\r\n\ \r\n\ @author\ Ro\u0219ca\ Paul-Teodor\ \r\n\ @version\ 1.0\ (22/12/2020)\r\n
+numComments=1

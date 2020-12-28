@@ -1,16 +1,21 @@
 #BlueJ class context
 comment0.target=FloatingText
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ Text\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment0.text=\r\n\ This\ class\ is\ used\ to\ hold\ and\ edit\ a\ string\ in\ the\ form\ of\ a\ visual\ object.\ \r\n\ <p>\r\n\ This\ object\ has\ the\ same\ functions\ as\ {@link\ Text},\ but\ will\ be\ moved\ when\ the\ world\ is\ scrolling,\ \r\n\ because\ it's\ not\ a\ fixed\ object.\r\n\ \r\n\ @author\ Ro\u0219ca\ Paul-Teodor\ \r\n\ @version\ 1.0\ (22/12/2020)\r\n
 comment1.params=
 comment1.target=FloatingText()
+comment1.text=\r\nConstructor\ for\ the\ FloatingText\ object.\ We\ just\ set\ the\ image.\r\n
 comment2.params=
 comment2.target=void\ updateImage()
+comment2.text=\r\n\ Method\ used\ to\ update\ the\ image\ of\ the\ object\ with\ the\ current\ text\r\n
 comment3.params=c
 comment3.target=void\ addChar(java.lang.String)
+comment3.text=\r\n\ Method\ used\ to\ add\ a\ String\ to\ our\ current\ text\r\n\ \r\n\ @param\ c\ the\ string\ desired\ to\ be\ added\ to\ our\ text\r\n
 comment4.params=
 comment4.target=void\ removeChar()
+comment4.text=\r\n\ Method\ used\ for\ removing\ the\ last\ character\ in\ our\ text\r\n
 comment5.params=
 comment5.target=void\ clear()
+comment5.text=\r\n\ Method\ used\ for\ flushing\ the\ text\ of\ our\ object\r\n
 comment6.params=
 comment6.target=java.lang.String\ getString()
 numComments=7

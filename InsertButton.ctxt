@@ -1,14 +1,19 @@
 #BlueJ class context
 comment0.target=InsertButton
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ InsertButton\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment0.text=\r\n\ This\ is\ an\ UI\ Button\ responsible\ for\ inserting\ a\ node\ in\ the\ tree.\r\n\ \r\n\ @see\ RBTree.insert()\r\n\ @see\ TreeInteractionButton\r\n\ @author\ Ro\u0219ca\ Paul-Teodor\ \r\n\ @version\ 1.0\ (22/12/2020)\r\n
 comment1.params=rbt\ myWorld
 comment1.target=InsertButton(RBTree,\ Background)
+comment1.text=\r\n\ Constructor\ for\ the\ button.\r\n\ @param\ rbt\ the\ tree\ to\ which\ the\ button\ is\ connected\ to\r\n\ @param\ myWorld\ the\ world\ in\ which\ the\ button\ is\ present\r\n
 comment2.params=
 comment2.target=void\ setNormal()
+comment2.text=\r\n\ Method\ that\ sets\ the\ button's\ image\ to\ the\ normal\ image\r\n
 comment3.params=
 comment3.target=void\ setFocused()
+comment3.text=\r\n\ Method\ that\ sets\ the\ button's\ image\ to\ the\ focused\ image\r\n
 comment4.params=
 comment4.target=void\ setPressed()
+comment4.text=\r\n\ Method\ that\ sets\ the\ button's\ image\ to\ the\ pressed\ image\r\n
 comment5.params=k
 comment5.target=void\ function(java.lang.String)
+comment5.text=\r\n\ Method\ that\ calls\ for\ the\ insertion\ of\ a\ new\ node\ in\ the\ tree\r\n\ @param\ k\ the\ key\ of\ the\ node\ we\ call\ the\ insertion\ for\r\n
 numComments=6

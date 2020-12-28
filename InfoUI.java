@@ -1,19 +1,14 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class InfoUI here.
+ * This class represents a window that shows information about the UI Buttons
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @see Fixed
+ * 
+ * @author Roșca Paul-Teodor 
+ * @version 1.0 (22/12/2020)
  */
 public class InfoUI extends Fixed
 {
-    /**
-     * Act - do whatever the InfoUI wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
-    public void act() 
-    {
-        // Add your action code here.
-    }    
+
 }

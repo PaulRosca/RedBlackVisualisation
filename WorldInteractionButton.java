@@ -1,13 +1,19 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class WorldInteractionButton here.
+ * This is a superclass for all the UI buttons that have functions related to the world.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @see Button
+ * 
+ * @author Roșca Paul-Teodor 
+ * @version 1.0 (22/12/2020)
  */
 public class WorldInteractionButton extends Button
 {
+    /**
+     * Constructor for the button
+     * @param myWorld the world in which the button is present
+     */
     public WorldInteractionButton(Background myWorld)
     {
         super(myWorld);
